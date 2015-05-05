@@ -13,7 +13,7 @@ for inp in inputs:
     N = int(fin.readline()) # number of vertices
     v = [[] for i in range(N)] # 2d matrix holding vertices' edge weights
     for i in xrange(N):
-        v[i] = [int(x) for x in fin.readline().split()]
+        v[[i] = [int(x) for x in fin.readline().split()]
     c = fin.readline() # holds color string
 
     # find an answer, and put into assign

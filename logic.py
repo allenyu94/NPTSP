@@ -44,6 +44,44 @@ class NPTSPSolver(Object):
             self.last_colors[1] += 1
 
     """
+    Finds minimum spanning tree of inputted vertex list
+    """
+    def findMST(self, v):
+        mst_answer = []
+        checklist = [x for x in self.vertices]
+        master_list = []
+        for vlist in self.vertices:
+            master_list += vlist
+        master_list.sort()
+
+        count = 0
+        # remove zero weights for edges to itself
+        while count != len(v):
+            master_list.remove(0)
+            count++
+
+        while master_list:
+            curr_shortest = master_list[0]
+            for y in range(checklist):
+                currlist = checklist[y]
+                if curr_shortest in currlist and self.visited[y] == 0:
+                    x = currlist.index(curr_shortest)
+                    mst_answer += curr_shortest
+                    otherlist = checklist[x]
+                    self.visited[x] = 1
+                    self.visited[y] = 1
+                    for i in range(self.num_vertices):
+                        currlist[i] = -1
+                        otherlist[i] = -1
+                        checklist[i][y] = -1
+                        master_list.remove(item)
+                    removelist = currlist[:x] + currlist[x+1:] + otherlist
+                    for item in removelist:
+                        master_list.remove(item)
+        return mst_answer
+
+
+    """
     Returns the list of path weights that gives us a path to all the vertices.
     Stores answer in self.answer
     """
