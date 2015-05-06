@@ -69,10 +69,9 @@ class NPTSPSolver:
                     print("found a list, list number:")
                     print(y)
                     print(curr_vertex)
-                    x = curr_vertex.index(curr_shortest_edge)
+                    x = curr_vertex.index(curr_shortest_edge) #the endpoint of the edge (the other vertex)
                     mst_answer += [curr_shortest_edge]
-                    print("mst answer")
-                    print(mst_answer)
+                    print("mst answer " + str(mst_answer))
                     other_vertex = vertex_list[x]
                     self.visited[x] = 1
                     self.visited[y] = 1
@@ -83,7 +82,10 @@ class NPTSPSolver:
                             edge_weights.remove(other_vertex[i])
                         curr_vertex[i] = -1
                         other_vertex[i] = -1
+                    print("curr_vertex " + str(y) + " " + str(curr_vertex))
+                    print("other_vertex " + str(x)+ " " + str(other_vertex))
                     break
+        print("final mst_answer returning here" + str(mst_answer))
         return mst_answer
 
     """
@@ -93,7 +95,43 @@ class NPTSPSolver:
     def getAnswer():
         return nil
 
-
-    #def obey_color(self, components):
-        
-    
+    def obey_color(self, components): 
+        for component in components:
+            if len(component) > 3:
+                curr_color = "W"
+                color_count = 0
+                for index in range(len(component)):
+                    last_color = curr_color
+                    curr_color = color_str[component[index]]
+                    if curr_color == last_color:
+                        color_count++
+                    else:
+                        color_count = 0
+                    if color_count > 3:
+                        a = component[index - 3]
+                        b = component[index - 2]
+                        c = component[index - 1]
+                        d = component[index]
+                        e = component[index + 1]
+                        a_b = self.vertices[a][b]
+                        b_c = self.vertices[b][c]
+                        c_d = self.vertices[c][d]
+                        d_e = self.vertices[d][e]
+                        ABC = a_b + b_c
+                        BCD = b_c + c_d
+                        CDE = c_d + d_e
+                        if (ABC < BCD and ABC < CDE):
+                            components.append(component[index:])
+                            component = component[:index]
+                        else if (BCD < ABC and BCD < CDE):
+                            components.append(component[(index + 1):])
+                            component = component[:(index + 1)]
+                        else:
+                            components.append(component[(index + 2):])
+                            component = component[:(index + 2)]
+                        break
+                    #
+                #
+            #
+        #                
+        return components
