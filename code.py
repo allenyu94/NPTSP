@@ -46,7 +46,7 @@ class NPTSPSolver:
     """
     Finds minimum spanning tree of inputted vertex list
     """
-    def findMSTparts(self):
+    def findMSTparts(self): ## CHANGED THIS FUNCTION NAME TO BE MORE APPROPRIATE -- change in NPTSP!
         mst_edges = [] # list of lists with (vertex, vertex) -- I guess we can delete this later, was just for information?
         adj_vertices = [0]*self.num_vertices
         edge_weights = []
@@ -56,7 +56,6 @@ class NPTSPSolver:
                 if index <= weightIndex:
                     weight = vertex[weightIndex]
                     if weight != 0:
-                        #print([weight, vertex.index(0)+1])
                         edge_weights.append([weight, (vertex.index(0)+1, weightIndex+1)])
         
         edge_weights.sort()
@@ -69,13 +68,11 @@ class NPTSPSolver:
             if mst_edges == []: # first edge, must add to MST
                 mst_edges.append(edge)
                 if adj_vertices[edge[0]-1] == 0:
-                    adj_vertices[edge[0]-1] = [edge[1]] # start at index 0...
+                    adj_vertices[edge[0]-1] = [edge[1]] 
                     if adj_vertices[edge[1]-1] == 0:
                         adj_vertices[edge[1]-1] = [edge[0]]
                     else:
                         adj_vertices[edge[1]-1] += [edge[0]]
-                    # print "hello"
-                    # print adj_vertices
                 elif adj_vertices[edge[1]-1] == 0:
                     adj_vertices[edge[1]-1] = [edge[0]]
                     if adj_vertices[edge[0]-1] == 0:
@@ -86,10 +83,7 @@ class NPTSPSolver:
                     adj_vertices[edge[0]-1] += [edge[1]]
                     adj_vertices[edge[1]-1] += [edge[0]]
                 self.visited.append([edge[0],edge[1]])
-                #print self.visited
             else: 
-                # print "SELF VISITED"
-                # print self.visited 
                 for component in self.visited:
                     if edge in mst_edges: 
                         visited = True 
@@ -100,7 +94,6 @@ class NPTSPSolver:
                         for otherComponent in self.visited:
                             if component != otherComponent:
                                 if edge[0] in component and edge[1] in otherComponent:
-                                    #print "is it here?"
                                     self.visited.remove(component)
                                     self.visited.remove(otherComponent)
                                     self.visited.append(component+otherComponent)
@@ -108,13 +101,11 @@ class NPTSPSolver:
                                     if edge not in mst_edges:
                                         mst_edges.append(edge)
                                         if adj_vertices[edge[0]-1] == 0:
-                                            adj_vertices[edge[0]-1] = [edge[1]] # start at index 0...
+                                            adj_vertices[edge[0]-1] = [edge[1]] 
                                             if adj_vertices[edge[1]-1] == 0:
                                                 adj_vertices[edge[1]-1] = [edge[0]]
                                             else:
                                                 adj_vertices[edge[1]-1] += [edge[0]]
-                                            # print "hello"
-                                            # print adj_vertices
                                         elif adj_vertices[edge[1]-1] == 0:
                                             adj_vertices[edge[1]-1] = [edge[0]]
                                             if adj_vertices[edge[0]-1] == 0:
@@ -129,15 +120,12 @@ class NPTSPSolver:
                             visited = True
                             if edge not in mst_edges:
                                 mst_edges.append(edge)
-                                #print adj_vertices 
                                 if adj_vertices[edge[0]-1] == 0:
-                                    adj_vertices[edge[0]-1] = [edge[1]] # start at index 0...
+                                    adj_vertices[edge[0]-1] = [edge[1]] 
                                     if adj_vertices[edge[1]-1] == 0:
                                         adj_vertices[edge[1]-1] = [edge[0]]
                                     else:
                                         adj_vertices[edge[1]-1] += [edge[0]]
-                                    # print "hello"
-                                    # print adj_vertices
                                 elif adj_vertices[edge[1]-1] == 0:
                                     adj_vertices[edge[1]-1] = [edge[0]]
                                     if adj_vertices[edge[0]-1] == 0:
@@ -153,13 +141,11 @@ class NPTSPSolver:
                             if edge not in mst_edges:
                                 mst_edges.append(edge)
                                 if adj_vertices[edge[0]-1] == 0:
-                                    adj_vertices[edge[0]-1] = [edge[1]] # start at index 0...
+                                    adj_vertices[edge[0]-1] = [edge[1]] 
                                     if adj_vertices[edge[1]-1] == 0:
                                         adj_vertices[edge[1]-1] = [edge[0]]
                                     else:
                                         adj_vertices[edge[1]-1] += [edge[0]]
-                                    # print "hello"
-                                    # print adj_vertices
                                 elif adj_vertices[edge[1]-1] == 0:
                                     adj_vertices[edge[1]-1] = [edge[0]]
                                     if adj_vertices[edge[0]-1] == 0:
@@ -174,13 +160,11 @@ class NPTSPSolver:
                     if edge not in mst_edges:
                         mst_edges.append(edge)
                         if adj_vertices[edge[0]-1] == 0:
-                            adj_vertices[edge[0]-1] = [edge[1]] # start at index 0...
+                            adj_vertices[edge[0]-1] = [edge[1]] 
                             if adj_vertices[edge[1]-1] == 0:
                                 adj_vertices[edge[1]-1] = [edge[0]]
                             else:
                                 adj_vertices[edge[1]-1] += [edge[0]]
-                            # print "hello"
-                            # print adj_vertices
                         elif adj_vertices[edge[1]-1] == 0:
                             adj_vertices[edge[1]-1] = [edge[0]]
                             if adj_vertices[edge[0]-1] == 0:
@@ -190,30 +174,21 @@ class NPTSPSolver:
                         else:
                             adj_vertices[edge[0]-1] += [edge[1]]
                             adj_vertices[edge[1]-1] += [edge[0]]
-                # print "SELF VISITED AFTER"
-                # print visited
-                # print self.visited
-                # check that self.visited only has one item in list?
-        # print "EDGes"
+        # print "EDGES"
         # print edge_weights
         # print "ADJACENCEY VERTICES"
         # print adj_vertices
         # print mst_edges
 
-        #print self.vertices
-
+        # Breaks MST into parts now
         for k in xrange(len(adj_vertices)):
             mstedge = adj_vertices[k]
             if mstedge != 0:
-                # print mstedge 
-                # print len(mstedge)
                 while len(mstedge) > 2:
-                    #print "too long"
                     lowestWeight = 101
                     lowestV = None 
                     secondLowestWeight = 101
                     secondLowestV = None 
-                    #edgesToKeep = [] #?
                     for otherV in mstedge:
                         weight = self.vertices[k][otherV-1]
                         if weight < lowestWeight:
@@ -227,30 +202,17 @@ class NPTSPSolver:
                             secondLowestWeightV = lowestV
                             lowestWeight = weight 
                             lowestV = otherV
-                            # if edgesToKeep == []:
-                            #     edgesToKeep.append(otherV)
-                            # else:
-                            #     edgesToKeep = [otherV, edgesToKeep[0]]
                         elif weight < secondLowestWeight:
                             if secondLowestV != None:
                                 adj_vertices[k].remove(secondLowestV)
                                 adj_vertices[secondLowestV-1].remove(k+1)
                             secondLowestWeight = weight 
                             secondLowestV = otherV
-
-                            #edgesToKeep = [edgesToKeep[0], otherV]
                         else:
-                            # print adj_vertices
-                            # print k 
-                            # print otherV 
-                            # print mstedge 
                             adj_vertices[k].remove(otherV)
                             adj_vertices[otherV-1].remove(k+1)
                     #adj_vertices[k] = [lowestV, secondLowestV]
         print adj_vertices
-
-
-
 
 
     """
