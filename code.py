@@ -5,7 +5,8 @@ class NPTSPSolver:
         self.num_vertices = N
         self.vertices = v
         self.color_str = c
-        self.visited = [0] * N # boolean to keep track of visited vertices
+        #self.visited = [0] * N # boolean to keep track of visited vertices
+        self.visited = []
         self.answer = [] # array to keep track of used edge weights
         self.last_colors = ("W", 0) # keeps track of previous colors and number of times seen
 
@@ -45,46 +46,68 @@ class NPTSPSolver:
     Finds minimum spanning tree of inputted vertex list
     """
     def findMST(self):
-        mst_answer = []
-        vertex_list = [x for x in self.vertices]
+        mst_edges = [] # list of lists with (vertex, vertex)
         edge_weights = []
-        for vertex in self.vertices:
-            edge_weights += vertex
-        print (edge_weights)
+        for index in xrange(len(self.vertices)):
+            vertex = self.vertices[index]
+            for weightIndex in xrange(len(vertex)):
+                if index <= weightIndex:
+                    weight = vertex[weightIndex]
+                    if weight != 0:
+                        #print([weight, vertex.index(0)+1])
+                        edge_weights.append([weight, (vertex.index(0)+1, weightIndex+1)])
+        
         edge_weights.sort()
+        #print(edge_weights)
+        for i in xrange(len(edge_weights)):
+            edge = edge_weights[i][1]
+            visited = False
+            # print "EDGE"
+            # print edge 
+            if mst_edges == []: # first edge, must add to MST
+                mst_edges.append(edge)
+                self.visited.append([edge[0],edge[1]])
+                #print self.visited
+            else: 
+                # print "SELF VISITED"
+                # print self.visited 
+                for component in self.visited:
+                    if edge in mst_edges: 
+                        visited = True 
+                    elif edge[0] in component and edge[1] in component: # THIS WOULD CREATE CYCLE
+                        visited = True 
+                        pass 
+                    else:
+                        for otherComponent in self.visited:
+                            if component != otherComponent:
+                                if edge[0] in component and edge[1] in otherComponent:
+                                    #print "is it here?"
+                                    self.visited.remove(component)
+                                    self.visited.remove(otherComponent)
+                                    self.visited.append(component+otherComponent)
+                                    visited = True
+                                    if edge not in mst_edges:
+                                        mst_edges.append(edge)
+                        if edge[0] in component: # when you have a new terminal edge to a path or something
+                            component.append(edge[1])
+                            visited = True
+                            if edge not in mst_edges:
+                                mst_edges.append(edge)
+                        elif edge[1] in component:
+                            component.append(edge[0])
+                            visited = True 
+                            if edge not in mst_edges:
+                                mst_edges.append(edge)
+                if visited == False:
+                    self.visited.append([edge[0], edge[1]])
+                    if edge not in mst_edges:
+                        mst_edges.append(edge)
+                # print "SELF VISITED AFTER"
+                # print visited
+                # print self.visited
+                # check that self.visited only has one item in list?
+        print mst_edges
 
-        count = 0
-        # remove zero weights for edges to itself
-        while count != self.num_vertices:
-            edge_weights.remove(0)
-            count += 1
-
-        while edge_weights:
-            curr_shortest_edge = edge_weights[0]
-            print("current shortest")
-            print(curr_shortest_edge)
-            for y in range(len(vertex_list)):
-                curr_vertex = vertex_list[y]
-                if curr_shortest_edge in curr_vertex and self.visited[y] == 0:
-                    print("found a list, list number:")
-                    print(y)
-                    print(curr_vertex)
-                    x = curr_vertex.index(curr_shortest_edge)
-                    mst_answer += [curr_shortest_edge]
-                    print("mst answer")
-                    print(mst_answer)
-                    other_vertex = vertex_list[x]
-                    self.visited[x] = 1
-                    self.visited[y] = 1
-                    for i in range(self.num_vertices):
-                        if i != y and curr_vertex[i] != -1:
-                            edge_weights.remove(curr_vertex[i])
-                        if i != x and other_vertex[i] != -1:
-                            edge_weights.remove(other_vertex[i])
-                        curr_vertex[i] = -1
-                        other_vertex[i] = -1
-                    break
-        return mst_answer
 
     """
     Returns the list of path weights that gives us a path to all the vertices.
