@@ -1,6 +1,4 @@
 
-
-
 class NPTSPSolver:
 
     def __init__(self, N, v, c):
