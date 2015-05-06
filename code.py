@@ -113,23 +113,29 @@ class NPTSPSolver:
                         c = component[index - 1]
                         d = component[index]
                         e = component[index + 1]
-                        a_b = self.vertices[a][b]
-                        b_c = self.vertices[b][c]
-                        c_d = self.vertices[c][d]
-                        d_e = self.vertices[d][e]
-                        ABC = a_b + b_c
-                        BCD = b_c + c_d
-                        CDE = c_d + d_e
-                        if (ABC < BCD and ABC < CDE):
+                        f = component[index + 2]
+                        if (color_str[e] == curr_color and color_str[f] == curr_color):
                             components.append(component[index:])
                             component = component[:index]
-                        else if (BCD < ABC and BCD < CDE):
-                            components.append(component[(index + 1):])
-                            component = component[:(index + 1)]
                         else:
-                            components.append(component[(index + 2):])
-                            component = component[:(index + 2)]
-                        break
+                            a_b = self.vertices[a][b]
+                            b_c = self.vertices[b][c]
+                            c_d = self.vertices[c][d]
+                            d_e = self.vertices[d][e]
+                            ABC = a_b + b_c
+                            BCD = b_c + c_d
+                            CDE = c_d + d_e
+                            if (ABC < BCD and ABC < CDE):
+                                components.append(component[index:])
+                                component = component[:index]
+                            else if (BCD < ABC and BCD < CDE):
+                                components.append(component[(index + 1):])
+                                component = component[:(index + 1)]
+                            else:
+                                components.append(component[(index + 2):])
+                                component = component[:(index + 2)]
+                            break
+                        #
                     #
                 #
             #
