@@ -1,7 +1,7 @@
 
 
 
-class NPTSPSolver(Object):
+class NPTSPSolver:
 
     def __init__(self, N, v, c):
         self.num_vertices = N
@@ -46,7 +46,7 @@ class NPTSPSolver(Object):
     """
     Finds minimum spanning tree of inputted vertex list
     """
-    def findMST(self, v):
+    def findMST(self):
         mst_answer = []
         checklist = [x for x in self.vertices]
         master_list = []
@@ -56,38 +56,40 @@ class NPTSPSolver(Object):
 
         count = 0
         # remove zero weights for edges to itself
-        while count != len(v):
+        while count != self.num_vertices:
             master_list.remove(0)
-            count++
+            count += 1
 
         while master_list:
             curr_shortest = master_list[0]
-            for y in range(checklist):
+            print("current shortest")
+            print(curr_shortest)
+            for y in range(len(checklist)):
                 currlist = checklist[y]
                 if curr_shortest in currlist and self.visited[y] == 0:
+                    print("found a list, list number:")
+                    print(y)
+                    print(currlist)
                     x = currlist.index(curr_shortest)
-                    mst_answer += curr_shortest
+                    mst_answer += [curr_shortest]
+                    print("mst answer")
+                    print(mst_answer)
                     otherlist = checklist[x]
                     self.visited[x] = 1
                     self.visited[y] = 1
                     for i in range(self.num_vertices):
+                        if i != y and currlist[i] != -1:
+                            master_list.remove(currlist[i])
+                        if i != x and otherlist[i] != -1:
+                            master_list.remove(otherlist[i])
                         currlist[i] = -1
                         otherlist[i] = -1
-                        checklist[i][y] = -1
-                        master_list.remove(item)
-                    removelist = currlist[:x] + currlist[x+1:] + otherlist
-                    for item in removelist:
-                        master_list.remove(item)
+                    break
         return mst_answer
-
 
     """
     Returns the list of path weights that gives us a path to all the vertices.
     Stores answer in self.answer
     """
     def getAnswer():
-
-
-
-
-
+        return nil
