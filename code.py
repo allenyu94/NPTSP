@@ -46,42 +46,43 @@ class NPTSPSolver:
     """
     def findMST(self):
         mst_answer = []
-        checklist = [x for x in self.vertices]
-        master_list = []
-        for vlist in self.vertices:
-            master_list += vlist
-        master_list.sort()
+        vertex_list = [x for x in self.vertices]
+        edge_weights = []
+        for vertex in self.vertices:
+            edge_weights += vertex
+        print (edge_weights)
+        edge_weights.sort()
 
         count = 0
         # remove zero weights for edges to itself
         while count != self.num_vertices:
-            master_list.remove(0)
+            edge_weights.remove(0)
             count += 1
 
-        while master_list:
-            curr_shortest = master_list[0]
+        while edge_weights:
+            curr_shortest_edge = edge_weights[0]
             print("current shortest")
-            print(curr_shortest)
-            for y in range(len(checklist)):
-                currlist = checklist[y]
-                if curr_shortest in currlist and self.visited[y] == 0:
+            print(curr_shortest_edge)
+            for y in range(len(vertex_list)):
+                curr_vertex = vertex_list[y]
+                if curr_shortest_edge in curr_vertex and self.visited[y] == 0:
                     print("found a list, list number:")
                     print(y)
-                    print(currlist)
-                    x = currlist.index(curr_shortest)
-                    mst_answer += [curr_shortest]
+                    print(curr_vertex)
+                    x = curr_vertex.index(curr_shortest_edge)
+                    mst_answer += [curr_shortest_edge]
                     print("mst answer")
                     print(mst_answer)
-                    otherlist = checklist[x]
+                    other_vertex = vertex_list[x]
                     self.visited[x] = 1
                     self.visited[y] = 1
                     for i in range(self.num_vertices):
-                        if i != y and currlist[i] != -1:
-                            master_list.remove(currlist[i])
-                        if i != x and otherlist[i] != -1:
-                            master_list.remove(otherlist[i])
-                        currlist[i] = -1
-                        otherlist[i] = -1
+                        if i != y and curr_vertex[i] != -1:
+                            edge_weights.remove(curr_vertex[i])
+                        if i != x and other_vertex[i] != -1:
+                            edge_weights.remove(other_vertex[i])
+                        curr_vertex[i] = -1
+                        other_vertex[i] = -1
                     break
         return mst_answer
 
@@ -91,3 +92,6 @@ class NPTSPSolver:
     """
     def getAnswer():
         return nil
+
+
+    #def obey_color(self, components):
