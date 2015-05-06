@@ -95,3 +95,5 @@ class NPTSPSolver:
 
 
     #def obey_color(self, components):
+        
+    
