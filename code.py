@@ -5,7 +5,7 @@ class NPTSPSolver:
 
     def __init__(self, N, v, c):
         self.num_vertices = N
-        self.vertices = v
+        self.edges = v
         self.color_str = c
         self.visited = [0] * N # boolean to keep track of visited vertices
         self.answer = [] # array to keep track of used edge weights
@@ -15,13 +15,13 @@ class NPTSPSolver:
     Returns list of EDGE WEIGHTS corresponding to the given vertex index i 
     """
     def getVertex(self, i):
-        return self.vertices[i]
+        return self.edges[i]
     
     """
     Returns EDGE WEIGHT corresponding to the two given vertex indices i, j
     """
     def getEdge(self, i, j):
-        return self.vertices[i][j]
+        return self.edges[i][j]
 
     """
     Updates visited list, adds path to answer. Given a path specified by 
@@ -48,10 +48,12 @@ class NPTSPSolver:
     """
     def findMST(self):
         mst_answer = []
-        checklist = [x for x in self.vertices]
+        adj_vertices = []
+        checklist = [x for x in self.edges]
         master_list = []
-        for vlist in self.vertices:
+        for vlist in self.edges:
             master_list += vlist
+            adj_vertices += [[]]
         master_list.sort()
 
         count = 0
@@ -72,6 +74,8 @@ class NPTSPSolver:
                     print(currlist)
                     x = currlist.index(curr_shortest)
                     mst_answer += [curr_shortest]
+                    adj_vertices[y] += [x]
+                    adj_vertices[x] += [y]
                     print("mst answer")
                     print(mst_answer)
                     otherlist = checklist[x]
@@ -85,6 +89,8 @@ class NPTSPSolver:
                         currlist[i] = -1
                         otherlist[i] = -1
                     break
+        print ("adj_vertices")
+        print (adj_vertices)
         return mst_answer
 
     """
