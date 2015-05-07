@@ -105,13 +105,13 @@ class NPTSPSolver:
             v1 = e[0]
             v2 = e[1]
             if adj_vertices[v1-1] == 0:
-                adj_vertices[v1-1] = [v2]
+                adj_vertices[v1-1] = [v2-1]
             else:
-                adj_vertices[v1-1] += [v2]
+                adj_vertices[v1-1] += [v2-1]
             if adj_vertices[v2-1] == 0:
-                adj_vertices[v2-1] = [v1]
+                adj_vertices[v2-1] = [v1-1]
             else:
-                adj_vertices[v2-1] += [v1]
+                adj_vertices[v2-1] += [v1-1]
 
         print adj_vertices
         return adj_vertices
