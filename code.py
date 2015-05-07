@@ -4,7 +4,7 @@ class NPTSPSolver:
 
     def __init__(self, N, v, c):
         self.num_vertices = N
-        self.edges = v
+        self.vertices = v
         self.color_str = c
         #self.visited = [0] * N # boolean to keep track of visited vertices
         self.visited = []
@@ -197,11 +197,11 @@ class NPTSPSolver:
 	            #print edge_list
 		        #print "Found empty list"
 	            count += 1
-	    if count == self.num_vertices:
+        if count == self.num_vertices:
 	        #jprint "no more edges to consider"
 	        return False 
 	    #print "** Not done yet! **"
-	    return True 
+        return True 
 
 
     """
@@ -333,3 +333,93 @@ class NPTSPSolver:
                 if info[component[0]] == 0:
                     info[component[0]] = self.color_str[component[0]]
         print info
+
+
+    """
+    Gets the component that contains a certain vertex index
+    """
+    def getcomponent(self, components, vertex):
+        for comp in components:
+            if vertex in comp:
+                return comp
+
+    """
+    Repositions component if necessary to maintain consistency
+    of the start and end of the list to be endpoints of components.
+    Inputs first comp, start endpoint, other comp, and other endpoint.
+    Ensures that two endpoints are combined in middle of the two lists.
+
+    (start endpoint) [first comp] + [other comp] (end endpoint)
+    this func. flips both comps and combines
+
+    [first comp] (start endpoint) + [other comp] (end endpoint)
+    this func. flips second comp and combines
+
+    """
+    def combineComponents(self, firstcomp, s_point, othercomp, e_point):
+        if firstcomp[0] == s_point: 
+            # start point is in front of first comp
+            firstcomp = firstcomp[::-1]
+        if othercomp[0] == e_point:
+            # end point is in front of other comp
+            othercomp = othercomp[::-1]
+        return = firstcomp + othercomp
+
+    """
+    Removes the component containing the vertex and returns the new
+    updated components list
+    """
+    def removeComponent(self, components, vertex):
+        for index in xrange(len(components)):
+            comp = components[index]
+            if vertex in comp:
+                components.remove(index)
+                return components
+
+
+    """
+    Combines the components and related info to create the NPTSP path
+    """
+    def combine(self, components, info):
+        if len(components) != 1: # while I still don't have a single path
+            first_index = None
+            for index in xrange(len(info)):
+                info_entry = info[index]
+                if info_entry:
+                    first_index = index
+                    startcomp = self.getcomponent(components, index)
+                    shortest_edge = 200
+                    closest_comp_index = None
+                    for info_index in xrange(len(info)):
+                        if info_index == index:
+                            continue
+                        else: 
+                            if not info[info_index]:
+                                # empty info section: continue
+                                continue
+                            curcolor = info_entry[0]
+                            curnum = info_entry[1]
+                            varcolor = info[info_index][0]
+                            varnum = info[info_index][1]
+                            if curcolor != varcolor or (curcolor == varcolor and curr_num + varnum <= 3):
+                                # if valid coloring
+                                if self.vertices[index][info_index] < shortest_edge: 
+                                    # if the new comp is closest so far
+                                    shortest_edge = self.vertices[index][info_index]
+                                    closest_comp_index = info_index
+                                #
+                            #
+                        #
+
+                    # updating info
+                    info[first_index] = []
+                    info[closest_comp_index] = []
+                    # updating components
+                    othercomp = self.getcomponent(components, closest_comp_index)
+                    newcomp = self.combineComponents(startcomp, first_index, othercomp, closest_comp_index)
+                    components = self.removeComponent(components, first_index)
+                    components = self.removeComponent(components, closest_comp_index)
+                    components.append(newcomp)
+
+        return components 
+
