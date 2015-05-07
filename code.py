@@ -147,17 +147,16 @@ class NPTSPSolver:
         
 	adj_list = mst
         path_components = [] 
-	start = None
-
-	#print "Starting to find path components"
 
 	while self.remains(adj_list):
-	    #print "In the while loop"
-	    #print "This is adj_list: " + str(adj_list)
+	    start = None
+	    min_val = 101
 	    for i in range(self.num_vertices):
 	        if len(adj_list[i]) == 1:
-		    start = i
-		    break
+		    vertex = adj_list[i][0]
+		    if self.vertices[i][vertex] < min_val:
+		        min_val = self.vertices[i][vertex]
+		        start = i
 	    #print "We start here: " + str(start)
             one_component = self.components(adj_list, start, [start])
 	    path_components.append(one_component)
@@ -258,7 +257,7 @@ class NPTSPSolver:
 	        info_list[start] = (start_color, continuous)
 
             #If the path is just a pair of nodes, check if the colors match
-	     and assign continuous accordingly.
+	    #and assign continuous accordingly.
 	    elif len(path) == 2:
 	        if start_color == end_color:
 		    info_list[start] = (start_color, continuous + 1)
