@@ -361,23 +361,6 @@ class NPTSPSolver:
                             break
         return components
 
-        """
-    Update info array if vertex is an endpoint of a component. Specify how many of the same color is adjacent to this vertex.
-    """
-    def updateInfo(self, components):
-        # set color string manually
-        self.color_str = "RRBBRRBB"
-        print self.color_str 
-
-        info = [0]*self.num_vertices
-        for component in components:
-            size = len(component)
-            if size == 1:
-                if info[component[0]] == 0:
-                    info[component[0]] = self.color_str[component[0]]
-        print info
-
-
     """
     Gets the component that contains a certain vertex index
     """
