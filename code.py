@@ -303,6 +303,7 @@ class NPTSPSolver:
         return nil
 
     def obey_color(self, components): 
+        color_str = self.color_str
         for comp_index in xrange(len(components)):
             component = components[comp_index]
             #print(component)
@@ -311,7 +312,7 @@ class NPTSPSolver:
                 color_count = 0
                 for index in range(len(component)):
                     last_color = curr_color
-                    curr_color = self.color_str[component[index]]
+                    curr_color = color_str[component[index]]
                     #print("\n last_color is " + last_color)
                     #print("curr_color is " + curr_color + "\n")
                     if curr_color == last_color:
@@ -319,7 +320,13 @@ class NPTSPSolver:
                     else:
                         color_count = 0
                     if color_count >= 3:
-                        #print("got into more than 3 of the same color count, index is " + str(index))
+                        #if there's 6 in a row of the same color, evenly divide it
+                        if len(component) > (index + 2):
+                            if (color_str[component[index + 1]] == curr_color and color_str[component[index + 2]] == curr_color):
+                                components.append(component[index:])
+                                components[comp_index] = component[:index]
+                                break 
+
                         a = component[index - 3]
                         b = component[index - 2]
                         c = component[index - 1]
@@ -330,32 +337,33 @@ class NPTSPSolver:
                         c_d = self.vertices[c][d]
                         ABC = a_b + b_c
                         BCD = b_c + c_d
+                        
+                        e = -1
                         if len(component) > (index + 1):
                             e = component[index + 1]
                             #print("e = %d" % (e))
                             d_e = self.vertices[d][e]
                             CDE = c_d + d_e
-                        if len(component) > (index + 2):
-                            f = component[index + 2]
-                            if (color_str[e] == curr_color and color_str[f] == curr_color):
-                                components.append(component[index:])
-                                components[comp_index] = component[:index]
-                                break 
-                        if (ABC < BCD and ABC < CDE):
+                            
+                        if ABC < BCD:
+                            if e != -1:
+                                if CDE < ABC:
+                                    components.append(component[(index - 1):])
+                                    components[comp_index] = component[:(index - 1)]
+                                    break
                             components.append(component[index:])
                             components[comp_index] = component[:index]
-                        elif (BCD < ABC and BCD < CDE):
+                            break
+                            
+                        else:
+                            if e != -1:
+                                if CDE < BCD:
+                                    components.append(component[(index - 1):])
+                                    components[comp_index] = component[:(index - 1)]
+                                    break
                             components.append(component[(index - 2):])
                             components[comp_index] = component[:(index - 2)]
-                        else:
-                            components.append(component[(index - 1):])
-                            components[comp_index] = component[:(index - 1)]
-                        break
-                        
-                    #
-                #
-            #
-        #                
+                            break
         return components
 
         """
