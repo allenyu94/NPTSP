@@ -459,7 +459,6 @@ class NPTSPSolver:
                                 #
                             #
                         #
-
                     if not closest_comp_index:
                         # if there is no valid path
                         return None
@@ -487,8 +486,10 @@ class NPTSPSolver:
     ([path], total weight)
     """
     def getAnswer(self, path):
-        if path:
-            return (path, sum(path))
-        else:
+        if not path:
             return (None, 0)
+        path_weight = 0
+        for i in xrange(len(path) - 1):
+            path_weight += self.vertices[i][i+1]
+        return (path, path_weight)
 
