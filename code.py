@@ -129,12 +129,16 @@ class NPTSPSolver:
         path_components = [] 
 	start = None
 
+	print "Starting to find path components"
+
 	while self.remains(adj_list):
+	    print "In the while loop"
 	    for i in range(self.num_vertices):
 	        if len(adj_list[i]) == 1:
 		    start = i
 		    break
-	    path_components.append(self.component(adj_list, start, [start]))
+	    path_components.append(self.components(adj_list, start, [start]))
+	    print "These are path components so far: " + str(path_components)
 
 	return path_components
 
@@ -144,11 +148,18 @@ class NPTSPSolver:
     that have yet to be considered.
     """
     def remains(self, alist):
+        print "Checking remains"
         count = 0
         for edge_list in alist:
 	    if not edge_list:
+	        print edge_list
+		print "Found empty list"
 	        count += 1
-	return count == self.num_vertices
+	if count == self.num_vertices:
+	    print "no more edges to consider"
+	    return False 
+	print "** Not done yet! **"
+	return True 
 
     """
     A recursive helper method which takes the current adjacency list, the 
@@ -160,7 +171,7 @@ class NPTSPSolver:
     """
     def components(self, list, index, current_list):
 
-        if not list:
+        if not list[index]:
 	    return current_list
 
 	minm = 101
@@ -169,6 +180,10 @@ class NPTSPSolver:
 	    if self.vertices[index][v] < minm:
 	        minm = self.vertices[index][v]
 		next_index = v
+	print "The next vertex is: " + str(v)
+	print "This next list is: " + str(list[next_index])
+	print "The current index is: " + str(index)
+	print "The current list is: " + str(list[index])
 	list[index].remove(next_index)
 	list[next_index].remove(index)
 	current_list += [next_index]
