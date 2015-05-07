@@ -130,7 +130,7 @@ class NPTSPSolver:
                 color_count = 0
                 for index in range(len(component)):
                     last_color = curr_color
-                    curr_color = color_str[component[index]]
+                    curr_color = self.color_str[component[index] - 1]
                     if curr_color == last_color:
                         color_count += 1
                     else:
