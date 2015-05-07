@@ -119,6 +119,23 @@ class NPTSPSolver:
 
 
     """
+    Update info array if vertex is an endpoint of a component. Specify how many of the same color is adjacent to this vertex.
+    """
+    def updateInfo(self, components):
+        # set color string manually
+        self.color_str = "RRBBRRBB"
+        print self.color_str 
+
+        info = [0]*self.num_vertices
+        for component in components:
+            size = len(component)
+            if size == 1:
+                if info[component[0]] == 0:
+                    info[component[0]] = self.color_str[component[0]]
+        print info
+
+
+    """
     Returns the list of path weights that gives us a path to all the vertices.
     Stores answer in self.answer
     """

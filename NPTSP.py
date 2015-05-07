@@ -23,6 +23,8 @@ for inp in inputs:
     #fout.write(str(sum(mst_answer))) OUTPUTS THE SUM OF THE MST EDGE WEIGHTS
     fout.write("\n")
 
+    print nptsp_solver.updateInfo([[1], [2], [3,4,5,6,7,8]])
+
     # find an answer, and put into assign
     #assign = [0] * N
     #for i in xrange(N):
