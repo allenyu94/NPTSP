@@ -145,6 +145,20 @@ class NPTSPSolver:
 	return self.components(list, next_index, current_list)
 
 
+    def update_info(path_list):
+
+        info_list = [None] * self.num_vertices
+        
+	for path in path_list:
+	    start = path[0]
+	    end = path[-1]
+	    start_color = self.color_str[start]
+	    end_color = self.color_str[end]
+
+	    continuous = 1
+
+
+
     """
     Returns the list of path weights that gives us a path to all the vertices.
     Stores answer in self.answer
