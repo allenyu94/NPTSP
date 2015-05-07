@@ -65,41 +65,14 @@ class NPTSPSolver:
             # print "EDGE"
             # print edge 
             # print self.visited 
+            # print "MY CURRENT MST"
             # print mst_edges
             if mst_edges == []: # first edge, must add to MST
                 mst_edges.append(edge)
                 self.visited.append([edge[0],edge[1]])
             else: 
-                for component in self.visited:
-                    if edge in mst_edges: 
-                        visited = True 
-                    elif edge[0] in component and edge[1] in component: # THIS WOULD CREATE CYCLE
-                        visited = True 
-                        pass 
-                    else:
-                        for otherComponent in self.visited:
-                            if component != otherComponent:
-                                if edge[0] in component and edge[1] in otherComponent:
-                                    self.visited.remove(component)
-                                    self.visited.remove(otherComponent)
-                                    self.visited.append(component+otherComponent)
-                                    visited = True
-                                    if edge not in mst_edges:
-                                        mst_edges.append(edge)
-                        if edge[0] in component: # when you have a new terminal edge to a path or something
-                            component.append(edge[1])
-                            visited = True
-                            if edge not in mst_edges:
-                                mst_edges.append(edge)
-                        elif edge[1] in component:
-                            component.append(edge[0])
-                            visited = True 
-                            if edge not in mst_edges:
-                                mst_edges.append(edge)
-                if visited == False:
-                    self.visited.append([edge[0], edge[1]])
-                    if edge not in mst_edges:
-                        mst_edges.append(edge)
+                self.MSThelper(edge, mst_edges, visited)
+                
         adj_vertices = [0]*self.num_vertices
         for e in mst_edges:
             v1 = e[0]
@@ -112,7 +85,56 @@ class NPTSPSolver:
                 adj_vertices[v2-1] = [v1-1]
             else:
                 adj_vertices[v2-1] += [v1-1]
+        # print "MY MSTTTT"
+        # print mst_edges 
         return adj_vertices
+
+    def MSThelper(self, edge, mst_edges, visited):
+        for component in self.visited:
+            if edge in mst_edges: 
+                #visited = True 
+                return 
+            elif edge[0] in component and edge[1] in component: # THIS WOULD CREATE CYCLE
+                #visited = True 
+                #pass 
+                return 
+            else:
+                for otherComponent in self.visited:
+                    if component != otherComponent:
+                        if (edge[0] in component and edge[1] in otherComponent):# or (edge[1] in component and edge[0] in otherComponent):
+                            # print "WHYYY"
+                            # print edge[0]
+                            # print edge[1]
+                            # print component 
+                            # print otherComponent 
+                            self.visited.remove(component)
+                            # print "after"
+                            # print self.visited
+                            self.visited.remove(otherComponent)
+                            self.visited.append(component+otherComponent)
+                            #visited = True
+
+                            if edge not in mst_edges:
+                                mst_edges.append(edge)
+                            return 
+        for component in self.visited:
+            if edge[0] in component: # when you have a new terminal edge to a path or something
+                component.append(edge[1])
+                
+                if edge not in mst_edges:
+                    mst_edges.append(edge)
+                return 
+            elif edge[1] in component:
+                component.append(edge[0])
+                
+                if edge not in mst_edges:
+                    mst_edges.append(edge)
+                return 
+        #if visited == False:
+        self.visited.append([edge[0], edge[1]])
+        if edge not in mst_edges:
+            mst_edges.append(edge)
+        return 
 
     """
     Takes an MST and returns the paths between each component.  A component
@@ -335,3 +357,19 @@ class NPTSPSolver:
             #
         #                
         return components
+
+        """
+    Update info array if vertex is an endpoint of a component. Specify how many of the same color is adjacent to this vertex.
+    """
+    def updateInfo(self, components):
+        # set color string manually
+        self.color_str = "RRBBRRBB"
+        print self.color_str 
+
+        info = [0]*self.num_vertices
+        for component in components:
+            size = len(component)
+            if size == 1:
+                if info[component[0]] == 0:
+                    info[component[0]] = self.color_str[component[0]]
+        print info
