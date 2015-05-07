@@ -24,9 +24,16 @@ for inp in inputs:
     #print('found my mst' + str(mst_answer))
     components = nptsp_solver.find_components(mst_answer)
     print("found my components " + str(components))
-    #colorized = nptsp_solver.obey_color(components)
-    #print("\n colorized my components " + str(colorized) +" \n")
+    colorized = nptsp_solver.obey_color(components)
+    print("\n colorized my components " + str(colorized) +" \n")
     #print(str(colorized))
+    info_list = nptsp_solver.update_info(colorized)
+    print("\n the color and number of consecutive color nodes info: " +
+           str(info_list) + "\n")
+    combined_comp = nptsp_solver.combine(colorized, info_list)
+    print("\n the combined component: " + str(combined_comp) + "\n")
+    answer = nptsp_solver.getAnswer(combined_comp)
+    print("\n total weight is: " + str(answer[1]) + "\n")
     #fout.write(str(sum(mst_answer))) OUTPUTS THE SUM OF THE MST EDGE WEIGHTS
     fout.write("\n")
 

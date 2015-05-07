@@ -147,17 +147,16 @@ class NPTSPSolver:
         
 	adj_list = mst
         path_components = [] 
-	start = None
-
-	#print "Starting to find path components"
 
 	while self.remains(adj_list):
-	    #print "In the while loop"
-	    #print "This is adj_list: " + str(adj_list)
+	    start = None
+	    min_val = 101
 	    for i in range(self.num_vertices):
 	        if len(adj_list[i]) == 1:
-		    start = i
-		    break
+		    vertex = adj_list[i][0]
+		    if self.vertices[i][vertex] < min_val:
+		        min_val = self.vertices[i][vertex]
+		        start = i
 	    #print "We start here: " + str(start)
             one_component = self.components(adj_list, start, [start])
 	    path_components.append(one_component)
@@ -233,8 +232,16 @@ class NPTSPSolver:
         current_list += [next_index]
         return self.components(list, next_index, current_list)
 
+    """
+    Helper method that will determine the color of the terminal nodes on each
+    path and how many nodes of the same color have been seen before it
 
-    def update_info(path_list):
+    path_list is a list of path components that have been correctly colored
+    and will output a list of tuples, where the ith position will contain 
+    information if and only if the ith node is a terminal node in some path,
+    otherwise it contains None.
+    """
+    def update_info(self, path_list):
 
         info_list = [None] * self.num_vertices
         
@@ -246,13 +253,49 @@ class NPTSPSolver:
 
             continuous = 1
 
+            #If the path is a singleton, assign the color and continous = 1
+            if len(path) == 1:
+                info_list[start] = (start_color, continuous)
 
-    """
-    Returns the list of path weights that gives us a path to all the vertices.
-    Stores answer in self.answer
-    """
-    def getAnswer():
-        return nil
+                #If the path is just a pair of nodes, check if the colors match
+            #and assign continuous accordingly.
+            elif len(path) == 2:
+                if start_color == end_color:
+                    info_list[start] = (start_color, continuous + 1)
+                    info_list[end] = (end_color, continuous + 1)
+                else:
+                    info_list[start] = (start_color, continuous)
+                    info_list[end] = (end_color, continuous)
+
+            else: 
+                second = path[1]
+                third = path[2]
+                second_color = self.color_str[second]
+                third_color = self.color_str[third]
+                
+                if start_color == second_color and start_color == third_color:
+                    info_list[start] = (start_color, continuous + 2)
+                elif start_color == second_color:
+                    info_list[start] = (start_color, continuous + 1)
+                else:
+                    info_list[start] = (start_color, continuous)
+
+                second_last = path[-2]
+                third_last = path[-3]
+                before_last = self.color_str[second_last]
+                thirdToLast = self.color_str[third_last]
+
+                if end_color == before_last and end_color == thirdToLast:
+                    info_list[end] = (end_color, continuous + 2)
+                elif end_color == before_last:
+                    info_list[end] = (end_color, continuous + 1)
+                else:
+                    info_list[end] = (end_color, continuous)
+
+        return info_list
+
+
+
 
     def obey_color(self, components): 
         color_str = self.color_str
@@ -363,7 +406,7 @@ class NPTSPSolver:
         if othercomp[0] == e_point:
             # end point is in front of other comp
             othercomp = othercomp[::-1]
-        return = firstcomp + othercomp
+        return firstcomp + othercomp
 
     """
     Removes the component containing the vertex and returns the new
@@ -373,7 +416,7 @@ class NPTSPSolver:
         for index in xrange(len(components)):
             comp = components[index]
             if vertex in comp:
-                components.remove(index)
+                components.remove(comp)
                 return components
 
 
@@ -381,7 +424,9 @@ class NPTSPSolver:
     Combines the components and related info to create the NPTSP path
     """
     def combine(self, components, info):
-        if len(components) != 1: # while I still don't have a single path
+        #print "my components: " + str(components) + "\n"
+        #print "my info: " + str(info) + "\n"
+        while len(components) != 1: # while I still don't have a single path
             first_index = None
             for index in xrange(len(info)):
                 info_entry = info[index]
@@ -397,11 +442,15 @@ class NPTSPSolver:
                             if not info[info_index]:
                                 # empty info section: continue
                                 continue
-                            curcolor = info_entry[0]
-                            curnum = info_entry[1]
+                            currcolor = info_entry[0]
+                            curr_num = info_entry[1]
                             varcolor = info[info_index][0]
                             varnum = info[info_index][1]
-                            if curcolor != varcolor or (curcolor == varcolor and curr_num + varnum <= 3):
+                            #print "curr color: " + str(currcolor)
+                            #print "curr num: " + str(curr_num)
+                            #print "var color: " + str(varcolor)
+                            #print "var num: " + str(varnum)
+                            if currcolor != varcolor or (currcolor == varcolor and curr_num + varnum <= 3):
                                 # if valid coloring
                                 if self.vertices[index][info_index] < shortest_edge: 
                                     # if the new comp is closest so far
@@ -411,15 +460,35 @@ class NPTSPSolver:
                             #
                         #
 
+                    if not closest_comp_index:
+                        # if there is no valid path
+                        return None
                     # updating info
                     info[first_index] = []
                     info[closest_comp_index] = []
                     # updating components
+                    #print "components before edit: " + str(components)
                     othercomp = self.getcomponent(components, closest_comp_index)
+                    #print ("old comp: " + str(startcomp))
+                    #print ("old comp: " + str(othercomp))
                     newcomp = self.combineComponents(startcomp, first_index, othercomp, closest_comp_index)
+                    #print "new comp: " + str(newcomp)
                     components = self.removeComponent(components, first_index)
                     components = self.removeComponent(components, closest_comp_index)
                     components.append(newcomp)
+                    #print "components after edit: " + str(components)
+                    break
 
-        return components 
+        return components[0] 
+
+
+    """
+    Returns the path list and total weight of the entire path as a tuple
+    ([path], total weight)
+    """
+    def getAnswer(self, path):
+        if path:
+            return (path, sum(path))
+        else:
+            return (None, 0)
 
