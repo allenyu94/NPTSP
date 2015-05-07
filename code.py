@@ -112,8 +112,6 @@ class NPTSPSolver:
                 adj_vertices[v2-1] = [v1-1]
             else:
                 adj_vertices[v2-1] += [v1-1]
-
-        print adj_vertices
         return adj_vertices
 
     """
@@ -138,6 +136,7 @@ class NPTSPSolver:
 	        if len(adj_list[i]) == 1:
 		    start = i
 		    break
+<<<<<<< HEAD
 	    #print "We start here: " + str(start)
             one_component = self.components(adj_list, start, [start])
 	    path_components.append(one_component)
@@ -150,6 +149,9 @@ class NPTSPSolver:
 		adj_list[vertex] = []
 	
 	print "These are path components: " + str(path_components)
+=======
+	    path_components.append(self.components(adj_list, start, [start]))
+>>>>>>> ead30213c6c31dd155a1e55dbfbaabddc49d7ce7
 
 	return path_components
 
@@ -236,47 +238,54 @@ class NPTSPSolver:
         return nil
 
     def obey_color(self, components): 
-        for component in components:
+        for comp_index in xrange(len(components)):
+            component = components[comp_index]
+            print(component)
             if len(component) > 3:
                 curr_color = "W"
                 color_count = 0
                 for index in range(len(component)):
                     last_color = curr_color
-                    curr_color = self.color_str[component[index] - 1]
+                    curr_color = self.color_str[component[index]]
+                    print("\n last_color is " + last_color)
+                    print("curr_color is " + curr_color + "\n")
                     if curr_color == last_color:
                         color_count += 1
                     else:
                         color_count = 0
-                    if color_count > 3:
+                    if color_count >= 3:
+                        print("got into more than 3 of the same color count, index is " + str(index))
                         a = component[index - 3]
                         b = component[index - 2]
                         c = component[index - 1]
                         d = component[index]
+                        print ("a = %d, b = %d, c = %d, d = %d" % (a, b, c, d))
                         a_b = self.vertices[a][b]
                         b_c = self.vertices[b][c]
                         c_d = self.vertices[c][d]
                         ABC = a_b + b_c
                         BCD = b_c + c_d
-                        if len(component) >= (index + 1):
+                        if len(component) > (index + 1):
                             e = component[index + 1]
+                            print("e = %d" % (e))
                             d_e = self.vertices[d][e]
                             CDE = c_d + d_e
-                        if len(component) >= (index + 2):
+                        if len(component) > (index + 2):
                             f = component[index + 2]
                             if (color_str[e] == curr_color and color_str[f] == curr_color):
                                 components.append(component[index:])
-                                component = component[:index]
-                                continue
+                                components[comp_index] = component[:index]
+                                break 
                         if (ABC < BCD and ABC < CDE):
                             components.append(component[index:])
-                            component = component[:index]
+                            components[comp_index] = component[:index]
                         elif (BCD < ABC and BCD < CDE):
                             components.append(component[(index - 2):])
-                            component = component[:(index - 2)]
+                            components[comp_index] = component[:(index - 2)]
                         else:
-                            components.append(component[(index - 3):])
-                            component = component[:(index - 3)]
-                        continue
+                            components.append(component[(index - 1):])
+                            components[comp_index] = component[:(index - 1)]
+                        break
                         
                     #
                 #
