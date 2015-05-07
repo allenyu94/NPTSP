@@ -439,27 +439,30 @@ class NPTSPSolver:
             for index in xrange(len(info)):
                 info_entry = info[index]
                 if info_entry:
+                    print("\ncurr vertex is " + info_entry[0] + ", %d.  This is vertex number %d \n" % (info_entry[1], index))
                     first_index = index
                     startcomp = self.getcomponent(components, index)
                     shortest_edge = 200
                     closest_comp_index = None
                     for info_index in xrange(len(info)):
+                        next_endpoint = info[info_index]
                         if info_index == index:
                             pass
-                        elif info[info_index] == None:
+                        elif next_endpoint == None or len(next_endpoint) == 0:
                             pass
                         # else: 
                             # if info[info_index]:
                         else:
-                            print("this time info[info_index] is " + str(info[info_index]))
+                            #print("this time info[info_index] is " + str(info[info_index]))
                             currcolor = info_entry[0]
                             curr_num = info_entry[1]
-                            varcolor = info[info_index][0]
-                            varnum = info[info_index][1]
+                            varcolor = next_endpoint[0]
+                            varnum = next_endpoint[1]
                             #print "curr color: " + str(currcolor)
                             #print "curr num: " + str(curr_num)
                             #print "var color: " + str(varcolor)
                             #print "var num: " + str(varnum)
+                            print ("next color is " + varcolor + ", %d.  This is vertex number %d"  %  (varnum, info_index))
                             if currcolor != varcolor or (currcolor == varcolor and curr_num + varnum <= 3):
                                 # if valid coloring
                                 if self.vertices[index][info_index] < shortest_edge: 
@@ -488,9 +491,10 @@ class NPTSPSolver:
                             #     #
                             # #
                         #
-
+                    print("%d got matched with %d" % (index, closest_comp_index))
                     if not closest_comp_index:
                         # if there is no valid path
+                        print("no closest component!")
                         return None
                     # updating info
                     info[first_index] = []
@@ -507,7 +511,6 @@ class NPTSPSolver:
                     components.append(newcomp)
                     #print "components after edit: " + str(components)
                     break
-
         return components[0] 
 
 
