@@ -129,18 +129,41 @@ class NPTSPSolver:
         path_components = [] 
 	start = None
 
-	print "Starting to find path components"
+	#print "Starting to find path components"
 
 	while self.remains(adj_list):
-	    print "In the while loop"
+	    #print "In the while loop"
+	    #print "This is adj_list: " + str(adj_list)
 	    for i in range(self.num_vertices):
 	        if len(adj_list[i]) == 1:
 		    start = i
 		    break
-	    path_components.append(self.components(adj_list, start, [start]))
-	    print "These are path components so far: " + str(path_components)
+	    #print "We start here: " + str(start)
+            one_component = self.components(adj_list, start, [start])
+	    path_components.append(one_component)
+	    for vertex in one_component:
+		for i in range(self.num_vertices):
+		    if vertex in adj_list[i]: 
+		        if len(adj_list[i]) == 1 and not self.multiconnected(adj_list, i):
+			    path_components.append([i])
+		        adj_list[i].remove(vertex)
+		adj_list[vertex] = []
+	
+	print "These are path components: " + str(path_components)
 
 	return path_components
+
+    """
+    Find whether a vertex is only connected to the graph by one edge.
+    """
+    def multiconnected(self, list, v):
+	count = 0
+	for vlist in list:
+	    if v in vlist:
+	        count += 1
+        if count > 1:
+	    return True
+	return False
 
 
     """
@@ -148,17 +171,17 @@ class NPTSPSolver:
     that have yet to be considered.
     """
     def remains(self, alist):
-        print "Checking remains"
+        #print "Checking remains"
         count = 0
         for edge_list in alist:
 	    if not edge_list:
-	        print edge_list
-		print "Found empty list"
+	        #print edge_list
+		#print "Found empty list"
 	        count += 1
 	if count == self.num_vertices:
-	    print "no more edges to consider"
+	    #jprint "no more edges to consider"
 	    return False 
-	print "** Not done yet! **"
+	#print "** Not done yet! **"
 	return True 
 
     """
@@ -172,6 +195,7 @@ class NPTSPSolver:
     def components(self, list, index, current_list):
 
         if not list[index]:
+	    print "The list before the end: " + str(list)
 	    return current_list
 
 	minm = 101
@@ -180,10 +204,10 @@ class NPTSPSolver:
 	    if self.vertices[index][v] < minm:
 	        minm = self.vertices[index][v]
 		next_index = v
-	print "The next vertex is: " + str(v)
-	print "This next list is: " + str(list[next_index])
-	print "The current index is: " + str(index)
-	print "The current list is: " + str(list[index])
+	#print "The next vertex is: " + str(v)
+	#print "This next list is: " + str(list[next_index])
+	#print "The current index is: " + str(index)
+	#print "The current list is: " + str(list[index])
 	list[index].remove(next_index)
 	list[next_index].remove(index)
 	current_list += [next_index]
