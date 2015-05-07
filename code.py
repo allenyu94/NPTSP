@@ -294,9 +294,17 @@ class NPTSPSolver:
 
         return info_list
 
-
-
-
+    """
+    Input: a list of components where each component is a list of vertices
+    Output: a list of components where each component is now guaranteed to follow the coloring rule
+    
+    1) For each component check if there is a potential for coloring issues (if theres more than 3 vertices).
+    2) If yes, then traverse through the component until you find 4 of the same color in a row.
+    3) Check if there's 6 of the same color in a row: if yes, break it so its 3 | 3
+    4) Check ABC < BCD.
+    5) If there's 5 of the same color in a row, further check if CDE < whichever is smaller from above.
+    6) Splice the component accordingly: splicing the component currently being proecessed and adding the leftover back into the list of comonents.
+    """
     def obey_color(self, components): 
         color_str = self.color_str
         for comp_index in xrange(len(components)):
@@ -431,36 +439,62 @@ class NPTSPSolver:
             for index in xrange(len(info)):
                 info_entry = info[index]
                 if info_entry:
+                    print("\ncurr vertex is " + info_entry[0] + ", %d.  This is vertex number %d \n" % (info_entry[1], index))
                     first_index = index
                     startcomp = self.getcomponent(components, index)
                     shortest_edge = 200
                     closest_comp_index = None
                     for info_index in xrange(len(info)):
+                        next_endpoint = info[info_index]
                         if info_index == index:
-                            continue
-                        else: 
-                            if not info[info_index]:
-                                # empty info section: continue
-                                continue
+                            pass
+                        elif next_endpoint == None or len(next_endpoint) == 0:
+                            pass
+                        # else: 
+                            # if info[info_index]:
+                        else:
+                            #print("this time info[info_index] is " + str(info[info_index]))
                             currcolor = info_entry[0]
                             curr_num = info_entry[1]
-                            varcolor = info[info_index][0]
-                            varnum = info[info_index][1]
+                            varcolor = next_endpoint[0]
+                            varnum = next_endpoint[1]
                             #print "curr color: " + str(currcolor)
                             #print "curr num: " + str(curr_num)
                             #print "var color: " + str(varcolor)
                             #print "var num: " + str(varnum)
+                            print ("next color is " + varcolor + ", %d.  This is vertex number %d"  %  (varnum, info_index))
                             if currcolor != varcolor or (currcolor == varcolor and curr_num + varnum <= 3):
                                 # if valid coloring
                                 if self.vertices[index][info_index] < shortest_edge: 
                                     # if the new comp is closest so far
                                     shortest_edge = self.vertices[index][info_index]
                                     closest_comp_index = info_index
+                                        #
                                 #
-                            #
+                            # if not info[info_index]:
+                            #     # empty info section: continue
+                            #     continue
+                            # currcolor = info_entry[0]
+                            # curr_num = info_entry[1]
+                            # varcolor = info[info_index][0]
+                            # varnum = info[info_index][1]
+                            # #print "curr color: " + str(currcolor)
+                            # #print "curr num: " + str(curr_num)
+                            # #print "var color: " + str(varcolor)
+                            # #print "var num: " + str(varnum)
+                            # if currcolor != varcolor or (currcolor == varcolor and curr_num + varnum <= 3):
+                            #     # if valid coloring
+                            #     if self.vertices[index][info_index] < shortest_edge: 
+                            #         # if the new comp is closest so far
+                            #         shortest_edge = self.vertices[index][info_index]
+                            #         closest_comp_index = info_index
+                            #     #
+                            # #
                         #
+                    print("%d got matched with %d" % (index, closest_comp_index))
                     if not closest_comp_index:
                         # if there is no valid path
+                        print("no closest component!")
                         return None
                     # updating info
                     info[first_index] = []
@@ -477,7 +511,6 @@ class NPTSPSolver:
                     components.append(newcomp)
                     #print "components after edit: " + str(components)
                     break
-
         return components[0] 
 
 
