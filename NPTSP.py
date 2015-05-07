@@ -17,10 +17,17 @@ for inp in inputs:
     for i in xrange(N):
         v[i] = [int(x) for x in fin.readline().split()]
     c = fin.readline() # holds color string
+    print (c)
     
     nptsp_solver = NPTSPSolver(N, v, c)
     mst_answer = nptsp_solver.findMST()
-    fout.write(str(sum(mst_answer)))
+    print('\n found my mst' + str(mst_answer))
+    components = nptsp_solver.find_components(mst_answer)
+    print("\n found my components " + str(components))
+    colorized = nptsp_solver.obey_color(components)
+    print("\n colorized my components " + str(colorized) +" \n")
+    #print(str(colorized))
+    #fout.write(str(sum(mst_answer))) OUTPUTS THE SUM OF THE MST EDGE WEIGHTS
     fout.write("\n")
 
     # find an answer, and put into assign
