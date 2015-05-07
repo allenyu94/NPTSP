@@ -18,12 +18,12 @@ for inp in inputs:
         v[i] = [int(x) for x in fin.readline().split()]
     c = fin.readline() # holds color string
     
-    print('testing ' + str(inp))
+    print('\n testing ' + str(inp))
     nptsp_solver = NPTSPSolver(N, v, c)
     mst_answer = nptsp_solver.findMST()
-    print('\n found my mst' + str(mst_answer))
-    #components = nptsp_solver.find_components(mst_answer)
-    #print("\n found my components " + str(components))
+    #print('found my mst' + str(mst_answer))
+    components = nptsp_solver.find_components(mst_answer)
+    print("found my components " + str(components))
     #colorized = nptsp_solver.obey_color(components)
     #print("\n colorized my components " + str(colorized) +" \n")
     #print(str(colorized))
