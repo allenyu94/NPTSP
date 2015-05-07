@@ -210,8 +210,16 @@ class NPTSPSolver:
 	current_list += [next_index]
 	return self.components(list, next_index, current_list)
 
+    """
+    Helper method that will determine the color of the terminal nodes on each
+    path and how many nodes of the same color have been seen before it
 
-    def update_info(path_list):
+    path_list is a list of path components that have been correctly colored
+    and will output a list of tuples, where the ith position will contain 
+    information if and only if the ith node is a terminal node in some path,
+    otherwise it contains None.
+    """
+    def update_info(self, path_list):
 
         info_list = [None] * self.num_vertices
         
@@ -223,6 +231,46 @@ class NPTSPSolver:
 
 	    continuous = 1
 
+            #If the path is a singleton, assign the color and continous = 1
+	    if len(path) == 1:
+	        info_list[start] = (start_color, continuous)
+
+            #If the path is just a pair of nodes, check if the colors match
+	     and assign continuous accordingly.
+	    elif len(path) == 2:
+	        if start_color == end_color:
+		    info_list[start] = (start_color, continuous + 1)
+		    info_list[end] = (end_color, continuous + 1)
+		else:
+		    info_list[start] = (start_color, continuous)
+		    info_list[end] = (end_color, continuous)
+
+	    else: 
+                second = path[1]
+		third = path[2]
+		second_color = self.color_str[second]
+		third_color = self.color_str[third]
+		
+		if start_color == second_color and start_color == third_color:
+		    info_list[start] = (start_color, continuous + 2)
+		elif start_color == second_color:
+		    info_list[start] = (start_color, continuous + 1)
+		else:
+		    info_list[start] = (start_color, continuous)
+
+		second_last = path[-2]
+		third_last = path[-3]
+		before_last = self.color_str[second_last]
+		thirdToLast = self.color_str[third_last]
+
+		if end_color == before_last and end_color == thirToLast:
+		    info_list[end] = (end_color, continuous + 2)
+		elif end_color == before_last:
+		    info_list[end] = (end_color, continuous + 1)
+		else:
+		    info_list[end] = (end_color, continuous)
+
+	return info_list
 
 
     """
