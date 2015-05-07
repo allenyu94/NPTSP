@@ -20,6 +20,8 @@ for inp in inputs:
     
     nptsp_solver = NPTSPSolver(N, v, c)
     mst_answer = nptsp_solver.findMSTparts()
+    colored_components = nptsp_solver.obey_color(mst_answer)
+    print(str(colored_components))
     #fout.write(str(sum(mst_answer))) OUTPUTS THE SUM OF THE MST EDGE WEIGHTS
     fout.write("\n")
 

@@ -212,7 +212,7 @@ class NPTSPSolver:
                             adj_vertices[k].remove(otherV)
                             adj_vertices[otherV-1].remove(k+1)
                     #adj_vertices[k] = [lowestV, secondLowestV]
-        print adj_vertices
+        return adj_vertices
         
         # while edge_weights:
         #     curr_shortest_edge = edge_weights[0]
@@ -259,7 +259,7 @@ class NPTSPSolver:
                     last_color = curr_color
                     curr_color = color_str[component[index]]
                     if curr_color == last_color:
-                        color_count++
+                        color_count += 1
                     else:
                         color_count = 0
                     if color_count > 3:
@@ -285,7 +285,7 @@ class NPTSPSolver:
                         if (ABC < BCD and ABC < CDE):
                             components.append(component[index:])
                             component = component[:index]
-                        else if (BCD < ABC and BCD < CDE):
+                        elif (BCD < ABC and BCD < CDE):
                             components.append(component[(index - 2):])
                             component = component[:(index - 2)]
                         else:
