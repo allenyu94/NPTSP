@@ -27,6 +27,9 @@ for inp in inputs:
     colorized = nptsp_solver.obey_color(components)
     print("\n colorized my components " + str(colorized) +" \n")
     #print(str(colorized))
+    info_list = nptsp_solver.update_info(colorized)
+    print("\n the color and number of consecutive color nodes info: " +
+           str(info_list) + "\n")
     #fout.write(str(sum(mst_answer))) OUTPUTS THE SUM OF THE MST EDGE WEIGHTS
     fout.write("\n")
 

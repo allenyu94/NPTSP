@@ -284,7 +284,7 @@ class NPTSPSolver:
 		before_last = self.color_str[second_last]
 		thirdToLast = self.color_str[third_last]
 
-		if end_color == before_last and end_color == thirToLast:
+		if end_color == before_last and end_color == thirdToLast:
 		    info_list[end] = (end_color, continuous + 2)
 		elif end_color == before_last:
 		    info_list[end] = (end_color, continuous + 1)
