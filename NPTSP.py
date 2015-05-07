@@ -19,7 +19,7 @@ for inp in inputs:
     c = fin.readline() # holds color string
     
     nptsp_solver = NPTSPSolver(N, v, c)
-    mst_answer = nptsp_solver.findMSTparts()
+    mst_answer = nptsp_solver.findMST()
     #fout.write(str(sum(mst_answer))) OUTPUTS THE SUM OF THE MST EDGE WEIGHTS
     fout.write("\n")
 

@@ -46,9 +46,8 @@ class NPTSPSolver:
     """
     Finds minimum spanning tree of inputted vertex list
     """
-    def findMSTparts(self): ## CHANGED THIS FUNCTION NAME TO BE MORE APPROPRIATE -- change in NPTSP!
-        mst_edges = [] # list of lists with (vertex, vertex) -- I guess we can delete this later, was just for information?
-        adj_vertices = [0]*self.num_vertices
+    def findMST(self): 
+        mst_edges = [] 
         edge_weights = []
         for index in xrange(len(self.vertices)):
             vertex = self.vertices[index]
@@ -65,23 +64,10 @@ class NPTSPSolver:
             visited = False
             # print "EDGE"
             # print edge 
+            # print self.visited 
+            # print mst_edges
             if mst_edges == []: # first edge, must add to MST
                 mst_edges.append(edge)
-                if adj_vertices[edge[0]-1] == 0:
-                    adj_vertices[edge[0]-1] = [edge[1]] 
-                    if adj_vertices[edge[1]-1] == 0:
-                        adj_vertices[edge[1]-1] = [edge[0]]
-                    else:
-                        adj_vertices[edge[1]-1] += [edge[0]]
-                elif adj_vertices[edge[1]-1] == 0:
-                    adj_vertices[edge[1]-1] = [edge[0]]
-                    if adj_vertices[edge[0]-1] == 0:
-                        adj_vertices[edge[0]-1] = edge[1]
-                    else:
-                        adj_vertices[edge[0]-1] += [edge[1]]
-                else:
-                    adj_vertices[edge[0]-1] += [edge[1]]
-                    adj_vertices[edge[1]-1] += [edge[0]]
                 self.visited.append([edge[0],edge[1]])
             else: 
                 for component in self.visited:
@@ -100,119 +86,36 @@ class NPTSPSolver:
                                     visited = True
                                     if edge not in mst_edges:
                                         mst_edges.append(edge)
-                                        if adj_vertices[edge[0]-1] == 0:
-                                            adj_vertices[edge[0]-1] = [edge[1]] 
-                                            if adj_vertices[edge[1]-1] == 0:
-                                                adj_vertices[edge[1]-1] = [edge[0]]
-                                            else:
-                                                adj_vertices[edge[1]-1] += [edge[0]]
-                                        elif adj_vertices[edge[1]-1] == 0:
-                                            adj_vertices[edge[1]-1] = [edge[0]]
-                                            if adj_vertices[edge[0]-1] == 0:
-                                                adj_vertices[edge[0]-1] = edge[1]
-                                            else:
-                                                adj_vertices[edge[0]-1] += [edge[1]]
-                                        else:
-                                            adj_vertices[edge[0]-1] += [edge[1]]
-                                            adj_vertices[edge[1]-1] += [edge[0]]
                         if edge[0] in component: # when you have a new terminal edge to a path or something
                             component.append(edge[1])
                             visited = True
                             if edge not in mst_edges:
                                 mst_edges.append(edge)
-                                if adj_vertices[edge[0]-1] == 0:
-                                    adj_vertices[edge[0]-1] = [edge[1]] 
-                                    if adj_vertices[edge[1]-1] == 0:
-                                        adj_vertices[edge[1]-1] = [edge[0]]
-                                    else:
-                                        adj_vertices[edge[1]-1] += [edge[0]]
-                                elif adj_vertices[edge[1]-1] == 0:
-                                    adj_vertices[edge[1]-1] = [edge[0]]
-                                    if adj_vertices[edge[0]-1] == 0:
-                                        adj_vertices[edge[0]-1] = edge[1]
-                                    else:
-                                        adj_vertices[edge[0]-1] += [edge[1]]
-                                else:
-                                    adj_vertices[edge[0]-1] += [edge[1]]
-                                    adj_vertices[edge[1]-1] += [edge[0]]
                         elif edge[1] in component:
                             component.append(edge[0])
                             visited = True 
                             if edge not in mst_edges:
                                 mst_edges.append(edge)
-                                if adj_vertices[edge[0]-1] == 0:
-                                    adj_vertices[edge[0]-1] = [edge[1]] 
-                                    if adj_vertices[edge[1]-1] == 0:
-                                        adj_vertices[edge[1]-1] = [edge[0]]
-                                    else:
-                                        adj_vertices[edge[1]-1] += [edge[0]]
-                                elif adj_vertices[edge[1]-1] == 0:
-                                    adj_vertices[edge[1]-1] = [edge[0]]
-                                    if adj_vertices[edge[0]-1] == 0:
-                                        adj_vertices[edge[0]-1] = edge[1]
-                                    else:
-                                        adj_vertices[edge[0]-1] += [edge[1]]
-                                else:
-                                    adj_vertices[edge[0]-1] += [edge[1]]
-                                    adj_vertices[edge[1]-1] += [edge[0]]
                 if visited == False:
                     self.visited.append([edge[0], edge[1]])
                     if edge not in mst_edges:
                         mst_edges.append(edge)
-                        if adj_vertices[edge[0]-1] == 0:
-                            adj_vertices[edge[0]-1] = [edge[1]] 
-                            if adj_vertices[edge[1]-1] == 0:
-                                adj_vertices[edge[1]-1] = [edge[0]]
-                            else:
-                                adj_vertices[edge[1]-1] += [edge[0]]
-                        elif adj_vertices[edge[1]-1] == 0:
-                            adj_vertices[edge[1]-1] = [edge[0]]
-                            if adj_vertices[edge[0]-1] == 0:
-                                adj_vertices[edge[0]-1] = edge[1]
-                            else:
-                                adj_vertices[edge[0]-1] += [edge[1]]
-                        else:
-                            adj_vertices[edge[0]-1] += [edge[1]]
-                            adj_vertices[edge[1]-1] += [edge[0]]
-        # print "EDGES"
-        # print edge_weights
-        # print "ADJACENCEY VERTICES"
-        # print adj_vertices
-        # print mst_edges
 
-        # Breaks MST into parts now
-        for k in xrange(len(adj_vertices)):
-            mstedge = adj_vertices[k]
-            if mstedge != 0:
-                while len(mstedge) > 2:
-                    lowestWeight = 101
-                    lowestV = None 
-                    secondLowestWeight = 101
-                    secondLowestV = None 
-                    for otherV in mstedge:
-                        weight = self.vertices[k][otherV-1]
-                        if weight < lowestWeight:
-                            if secondLowestV != None:
-                                adj_vertices[k].remove(secondLowestV)
-                                adj_vertices[secondLowestV-1].remove(k+1)
-                            if lowestV != None:
-                                adj_vertices[k].remove(lowestV)
-                                adj_vertices[lowestV-1].remove(k+1)
-                            secondLowestWeight = lowestWeight
-                            secondLowestWeightV = lowestV
-                            lowestWeight = weight 
-                            lowestV = otherV
-                        elif weight < secondLowestWeight:
-                            if secondLowestV != None:
-                                adj_vertices[k].remove(secondLowestV)
-                                adj_vertices[secondLowestV-1].remove(k+1)
-                            secondLowestWeight = weight 
-                            secondLowestV = otherV
-                        else:
-                            adj_vertices[k].remove(otherV)
-                            adj_vertices[otherV-1].remove(k+1)
-                    #adj_vertices[k] = [lowestV, secondLowestV]
+        adj_vertices = [0]*self.num_vertices
+        for e in mst_edges:
+            v1 = e[0]
+            v2 = e[1]
+            if adj_vertices[v1-1] == 0:
+                adj_vertices[v1-1] = [v2]
+            else:
+                adj_vertices[v1-1] += [v2]
+            if adj_vertices[v2-1] == 0:
+                adj_vertices[v2-1] = [v1]
+            else:
+                adj_vertices[v2-1] += [v1]
+
         print adj_vertices
+        return adj_vertices
 
 
     """
