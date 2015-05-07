@@ -117,6 +117,79 @@ class NPTSPSolver:
         return adj_vertices
 
     """
+    Takes an MST and returns the paths between each component.  A component
+    consists of nodes and edges that make a path, and all components together
+    gives you the path separated by edges.
+
+    The MST is represented by an adjacency list.
+    """
+    def find_components(self, mst):
+        
+	adj_list = mst
+        path_components = [] 
+	start = None
+
+	while self.remains(adj_list):
+	    for i in range(self.num_vertices):
+	        if len(adj_list[i]) == 1:
+		    start = i
+		    break
+	    path_components.append(self.component(adj_list, start, [start]))
+
+	return path_components
+
+
+    """
+    Helper method to find_components to count the number of edges in the MST
+    that have yet to be considered.
+    """
+    def remains(self, alist):
+        count = 0
+        for edge_list in alist:
+	    if not edge_list:
+	        count += 1
+	return count == self.num_vertices
+
+    """
+    A recursive helper method which takes the current adjacency list, the 
+    current vertex (denoted as index), as well as the list of the component 
+    so far.
+
+    Each call will find the smallest [remaining] edge incident on the current
+    vertex and choose it to be part of the component.
+    """
+    def components(self, list, index, current_list):
+
+        if not list:
+	    return current_list
+
+	minm = 101
+	next_index = None
+	for v in list[index]:
+	    if self.vertices[index][v] < minm:
+	        minm = self.vertices[index][v]
+		next_index = v
+	list[index].remove(next_index)
+	list[next_index].remove(index)
+	current_list += [next_index]
+	return self.components(list, next_index, current_list)
+
+
+    def update_info(path_list):
+
+        info_list = [None] * self.num_vertices
+        
+	for path in path_list:
+	    start = path[0]
+	    end = path[-1]
+	    start_color = self.color_str[start]
+	    end_color = self.color_str[end]
+
+	    continuous = 1
+
+
+
+    """
     Returns the list of path weights that gives us a path to all the vertices.
     Stores answer in self.answer
     """
