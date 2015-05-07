@@ -24,7 +24,6 @@ for inp in inputs:
     print('\n found my mst' + str(mst_answer))
     components = nptsp_solver.find_components(mst_answer)
     print("\n found my components " + str(components))
-    components = [ [7,6,2,3,4,5], [0], [1] ]
     colorized = nptsp_solver.obey_color(components)
     print("\n colorized my components " + str(colorized) +" \n")
     #print(str(colorized))

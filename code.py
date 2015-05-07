@@ -136,7 +136,6 @@ class NPTSPSolver:
 	        if len(adj_list[i]) == 1:
 		    start = i
 		    break
-<<<<<<< HEAD
 	    #print "We start here: " + str(start)
             one_component = self.components(adj_list, start, [start])
 	    path_components.append(one_component)
@@ -149,10 +148,6 @@ class NPTSPSolver:
 		adj_list[vertex] = []
 	
 	print "These are path components: " + str(path_components)
-=======
-	    path_components.append(self.components(adj_list, start, [start]))
->>>>>>> ead30213c6c31dd155a1e55dbfbaabddc49d7ce7
-
 	return path_components
 
     """
