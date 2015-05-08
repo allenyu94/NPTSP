@@ -145,43 +145,44 @@ class NPTSPSolver:
     """
     def find_components(self, mst):
         
-	adj_list = mst
+        adj_list = mst
         path_components = [] 
 
-	while self.remains(adj_list):
-	    start = None
-	    min_val = 101
-	    for i in range(self.num_vertices):
-	        if len(adj_list[i]) == 1:
-		    vertex = adj_list[i][0]
-		    if self.vertices[i][vertex] < min_val:
-		        min_val = self.vertices[i][vertex]
-		        start = i
-	    #print "We start here: " + str(start)
+        while self.remains(adj_list):
+            start = None
+            min_val = 101
+            for i in range(self.num_vertices):
+                print adj_list[i]
+                if len(adj_list[i]) == 1:
+                    vertex = adj_list[i][0]
+                    if self.vertices[i][vertex] < min_val:
+                        min_val = self.vertices[i][vertex]
+                        start = i
+            #print "We start here: " + str(start)
             one_component = self.components(adj_list, start, [start])
-	    path_components.append(one_component)
-	    for vertex in one_component:
-		for i in range(self.num_vertices):
-		    if vertex in adj_list[i]: 
-		        if len(adj_list[i]) == 1 and not self.multiconnected(adj_list, i):
-			    path_components.append([i])
-		        adj_list[i].remove(vertex)
-		adj_list[vertex] = []
-	
-	#print "These are path components: " + str(path_components)
-	return path_components
+            path_components.append(one_component)
+            for vertex in one_component:
+                for i in range(self.num_vertices):
+                    if vertex in adj_list[i]: 
+                        if len(adj_list[i]) == 1 and not self.multiconnected(adj_list, i):
+                            path_components.append([i])
+                        adj_list[i].remove(vertex)
+                adj_list[vertex] = []
+    
+        #print "These are path components: " + str(path_components)
+        return path_components
 
     """
     Find whether a vertex is only connected to the graph by one edge.
     """
     def multiconnected(self, list, v):
-	count = 0
-	for vlist in list:
-	    if v in vlist:
-	        count += 1
+        count = 0
+        for vlist in list:
+            if v in vlist:
+                count += 1
         if count > 1:
-	    return True
-	return False
+            return True
+        return False
 
 
     """
@@ -192,14 +193,14 @@ class NPTSPSolver:
         #print "Checking remains"
         count = 0
         for edge_list in alist:
-	        if not edge_list:
-	            #print edge_list
-		        #print "Found empty list"
-	            count += 1
+            if not edge_list:
+                #print edge_list
+                #print "Found empty list"
+                count += 1
         if count == self.num_vertices:
-	        #jprint "no more edges to consider"
-	        return False 
-	    #print "** Not done yet! **"
+            #jprint "no more edges to consider"
+            return False 
+        #print "** Not done yet! **"
         return True 
 
 
@@ -467,7 +468,7 @@ class NPTSPSolver:
             for index in xrange(len(info)):
                 info_entry = info[index]
                 if info_entry:
-                    print("\ncurr vertex is " + info_entry[0] + ", %d.  This is vertex number %d \n" % (info_entry[1], index))
+                    #print("\ncurr vertex is " + info_entry[0] + ", %d.  This is vertex number %d \n" % (info_entry[1], index))
                     first_index = index
                     startcomp = self.getcomponent(components, index)
                     shortest_edge = 200
