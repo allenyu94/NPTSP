@@ -395,10 +395,12 @@ class NPTSPSolver:
 
     """
     def combineComponents(self, firstcomp, s_point, othercomp, e_point):
+        print "spoint " + str(s_point)
+        print "epoint " + str(e_point)
         if firstcomp[0] == s_point and len(firstcomp) > 1: 
             # start point is in front of first comp
             firstcomp = firstcomp[::-1]
-        if othercomp[0] == e_point and len(othercomp) > 1:
+        if othercomp[0] != e_point and len(othercomp) > 1:
             # end point is in front of other comp
             othercomp = othercomp[::-1]
         return firstcomp + othercomp
@@ -428,17 +430,18 @@ class NPTSPSolver:
             count = 1
             mycolor = self.color_str[firstvertex]
             nextcolor = self.color_str[component[1]]
-            while (count != 2 and nextcolor == mycolor):
+            max_count = 3 if len(component) >= 3 else 2
+            while (count != max_count and nextcolor == mycolor):
+                nextcolor = self.color_str[component[count]]
                 count += 1
-                nextcolor = self.color_str[count + 1]
             info[firstvertex] = (mycolor, count)
             
             count = 1
             mycolor = self.color_str[secondvertex]
             nextcolor = self.color_str[component[-2]]
-            while (count != 2 and nextcolor == mycolor):
+            while (count != max_count and nextcolor == mycolor):
+                nextcolor = self.color_str[component[-1 - count]]
                 count += 1
-                nextcolor = self.color_str[-2 - count]
             info[secondvertex] = (mycolor, count)
             return info
 
@@ -455,6 +458,8 @@ class NPTSPSolver:
                 info_entry = info[index]
                 if info_entry:
                     #print("\ncurr vertex is " + info_entry[0] + ", %d.  This is vertex number %d \n" % (info_entry[1], index))
+                    #print("\ncomponents I have to work with: " + str(components))
+                    #print("\ninfo that i have: " + str(info))
                     first_index = index
                     startcomp = self.getcomponent(components, index)
                     shortest_edge = 200
@@ -499,9 +504,16 @@ class NPTSPSolver:
                         #print info[components[0][1]]
                     if not closest_comp_index:
                         # if there is no valid path
+                        cont = False
+                        for inf_index in xrange(len(info)):
+                            if info[inf_index] and inf_index != index:
+                                cont = True
+                                break
+                        if cont:
+                            continue 
                         print("no closest component!")
                         return None
-                    #print("%d got matched with %d" % (index, closest_comp_index))
+                    print("%d got matched with %d" % (index, closest_comp_index))
                     # updating components
                     #print "components before edit: " + str(components)
                     othercomp = self.getcomponent(components, closest_comp_index)
@@ -516,10 +528,15 @@ class NPTSPSolver:
                     #print components
                     components = self.removeComponent(components, closest_comp_index)
                     components.append(newcomp)
+                    #print "new components: " + str(components)
                     # updating info
                     #print "info before: " + str(info) + "\n"
+                    #print first_index
                     info[first_index] = []
+                    #print info
+                    #print closest_comp_index
                     info[closest_comp_index] = []
+                    #print info
                     info = self.updateCompInfo(newcomp, info)
                     #print "info after: " + str(info) + "\n"
                     #print "components after edit: " + str(components)
