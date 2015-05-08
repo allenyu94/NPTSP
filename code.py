@@ -464,15 +464,17 @@ class NPTSPSolver:
             first_index = None
             for index in xrange(len(info)):
                 info_entry = info[index]
+                deadcheck = 0
                 if info_entry:
-                    #print("\ncurr vertex is " + info_entry[0] + ", %d.  This is vertex number %d \n" % (info_entry[1], index))
-                    #print("\ncomponents I have to work with: " + str(components))
-                    #print("\ninfo that i have: " + str(info))
+                    print("\ncurr vertex is " + info_entry[0] + ", %d.  This is vertex number %d \n" % (info_entry[1], index))
+                    print("\ncomponents I have to work with: " + str(components))
+                    print("\ninfo that i have: " + str(info))
                     first_index = index
                     startcomp = self.getcomponent(components, index)
                     shortest_edge = 200
                     closest_comp_index = None
                     for info_index in xrange(len(info)):
+                        deadcheck += 1
                         next_endpoint = info[info_index]
                         if info_index == index:
                             pass
@@ -512,6 +514,9 @@ class NPTSPSolver:
                         #print info[components[0][1]]
                     if not closest_comp_index:
                         # if there is no valid path
+                        if deadcheck == self.num_vertices:
+                            # PLACE COLOR EXTRACTION HERE
+                            print "i am dead"
                         cont = False
                         for inf_index in xrange(len(info)):
                             if info[inf_index] and inf_index != index:
@@ -536,9 +541,9 @@ class NPTSPSolver:
                     #print components
                     components = self.removeComponent(components, closest_comp_index)
                     components.append(newcomp)
-                    #print "new components: " + str(components)
+                    print "new components: " + str(components)
                     # updating info
-                    #print "info before: " + str(info) + "\n"
+                    print "info before: " + str(info) + "\n"
                     #print first_index
                     info[first_index] = []
                     #print info
@@ -546,8 +551,8 @@ class NPTSPSolver:
                     info[closest_comp_index] = []
                     #print info
                     info = self.updateCompInfo(newcomp, info)
-                    #print "info after: " + str(info) + "\n"
-                    #print "components after edit: " + str(components)
+                    print "info after: " + str(info) + "\n"
+                    print "components after edit: " + str(components)
                     break
         for index in xrange(len(components[0])):
             components[0][index] += 1
