@@ -52,18 +52,22 @@ class NPTSPSolver:
         for index in xrange(len(self.vertices)):
             vertex = self.vertices[index]
             for weightIndex in xrange(len(vertex)):
-                if index <= weightIndex:
+                if index < weightIndex:
                     weight = vertex[weightIndex]
-                    if weight != 0:
-                        edge_weights.append([weight, (vertex.index(0)+1, weightIndex+1)])
+                    edge_weights.append([weight, (vertex.index(0)+1, weightIndex+1)])
+        
         
         edge_weights.sort()
+        
+        # print 'blah!!!'
 
         for i in xrange(len(edge_weights)):
             edge = edge_weights[i][1]
-            visited = False
-            # print "EDGE"
-            # print edge 
+            #print "EDGE"
+            if edge[0] == 3 or edge[0] == 4:
+                print "hi"
+                print edge
+            
             # print self.visited 
             # print "MY CURRENT MST"
             # print mst_edges
@@ -71,9 +75,10 @@ class NPTSPSolver:
                 mst_edges.append(edge)
                 self.visited.append([edge[0],edge[1]])
             else: 
-                self.MSThelper(edge, mst_edges, visited)
+                self.MSThelper(edge, mst_edges)
                 
         adj_vertices = [0]*self.num_vertices
+        
         for e in mst_edges:
             v1 = e[0]
             v2 = e[1]
@@ -85,11 +90,17 @@ class NPTSPSolver:
                 adj_vertices[v2-1] = [v1-1]
             else:
                 adj_vertices[v2-1] += [v1-1]
+
+        adj_vertices = [x for x in adj_vertices if x != 0]
+        
+        # print "MY ADJ VERTICES"
+        # print adj_vertices
         # print "MY MSTTTT"
         # print mst_edges 
+        # print "end MST"
         return adj_vertices
 
-    def MSThelper(self, edge, mst_edges, visited):
+    def MSThelper(self, edge, mst_edges):
         for component in self.visited:
             if edge in mst_edges: 
                 #visited = True 
@@ -144,7 +155,8 @@ class NPTSPSolver:
     The MST is represented by an adjacency list.
     """
     def find_components(self, mst):
-        
+        # print "find components fn"
+        # print mst 
         adj_list = mst
         path_components = [] 
 
