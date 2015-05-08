@@ -507,7 +507,6 @@ class NPTSPSolver:
                                 #
                             #
                         #
-                        
                     #print "comps before: " + str(components)
                     #print info[components[0][0]]
                     #if len(components[0]) > 1:
@@ -517,6 +516,9 @@ class NPTSPSolver:
                         if deadcheck == self.num_vertices:
                             # PLACE COLOR EXTRACTION HERE
                             print "i am dead"
+                            print "info before extract: " + str(info)
+                            self.extract_color(components, info)
+                            print "info after extract: " + str(info)
                         cont = False
                         for inf_index in xrange(len(info)):
                             if info[inf_index] and inf_index != index:
@@ -558,6 +560,21 @@ class NPTSPSolver:
             components[0][index] += 1
         return components[0] 
 
+    def extract_color(self, components, info):
+        print('extracting colors now')
+        color_str = self.color_str
+        for component in components:
+            if len(component) > 3:
+                end_color = color_str[component[0]]
+                for index in xrange(len(component)):
+                    print "index " + str(index)
+                    if color_str[component[index]] != end_color:
+                        if index + 1 < len(component) and color_str[component[index + 1]] != end_color:
+                            vertex = component.pop(index)
+                            component.insert(0, vertex)
+                            print "updating info"
+                            self.updateCompInfo(component, info)
+                            return                    
 
     """
     Returns the path list and total weight of the entire path as a tuple
