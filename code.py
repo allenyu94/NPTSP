@@ -224,10 +224,6 @@ class NPTSPSolver:
             if self.vertices[index][v] < minm:
                 minm = self.vertices[index][v]
             next_index = v
-        #print "The next vertex is: " + str(v)
-        #print "This next list is: " + str(list[next_index])
-        #print "The current index is: " + str(index)
-        #print "The current list is: " + str(list[index])
         list[index].remove(next_index)
         list[next_index].remove(index)
         current_list += [next_index]
@@ -258,7 +254,7 @@ class NPTSPSolver:
             if len(path) == 1:
                 info_list[start] = (start_color, continuous)
 
-                #If the path is just a pair of nodes, check if the colors match
+            #If the path is a pair of nodes, check if the colors match
             #and assign continuous accordingly.
             elif len(path) == 2:
                 if start_color == end_color:
@@ -369,23 +365,6 @@ class NPTSPSolver:
                             components[comp_index] = component[:(index - 2)]
                             break
         return components
-
-        """
-    Update info array if vertex is an endpoint of a component. Specify how many of the same color is adjacent to this vertex.
-    """
-    def updateInfo(self, components):
-        # set color string manually
-        self.color_str = "RRBBRRBB"
-        print self.color_str 
-
-        info = [0]*self.num_vertices
-        for component in components:
-            size = len(component)
-            if size == 1:
-                if info[component[0]] == 0:
-                    info[component[0]] = self.color_str[component[0]]
-        print info
-
 
     """
     Gets the component that contains a certain vertex index
