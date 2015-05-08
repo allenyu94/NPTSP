@@ -34,6 +34,8 @@ for inp in inputs:
     #print("\n the color and number of consecutive color nodes info: " + str(info_list) + "\n")
     
     combined_comp = nptsp_solver.combine(colorized, info_list)
+    if not combined_comp:
+        combined_comp = []
     print("\n the combined component: " + str(combined_comp) + "\n")
     
     answer = nptsp_solver.getAnswer(combined_comp)

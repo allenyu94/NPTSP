@@ -55,22 +55,13 @@ class NPTSPSolver:
                 if index < weightIndex:
                     weight = vertex[weightIndex]
                     edge_weights.append([weight, (vertex.index(0)+1, weightIndex+1)])
-        
+
         
         edge_weights.sort()
         
-        # print 'blah!!!'
 
         for i in xrange(len(edge_weights)):
             edge = edge_weights[i][1]
-            #print "EDGE"
-            if edge[0] == 3 or edge[0] == 4:
-                print "hi"
-                print edge
-            
-            # print self.visited 
-            # print "MY CURRENT MST"
-            # print mst_edges
             if mst_edges == []: # first edge, must add to MST
                 mst_edges.append(edge)
                 self.visited.append([edge[0],edge[1]])
@@ -163,14 +154,11 @@ class NPTSPSolver:
         adj_list = mst
         path_components = [] 
 
-	print "Before we start, what is mst: " + str(mst) + "\n"
-
         while self.remains(adj_list):
 	    #print "This is adj_list : " + str(adj_list) + "\n"
             start = None
             min_val = 101
             for i in range(self.num_vertices):
-                #print "What is adj_list[i]: " + str(adj_list[i]) + "\n"
                 if len(adj_list[i]) == 1:
                     vertex = adj_list[i][0]
                     if self.vertices[i][vertex] < min_val:
@@ -440,7 +428,7 @@ class NPTSPSolver:
             count = 1
             mycolor = self.color_str[firstvertex]
             nextcolor = self.color_str[component[1]]
-            while (count != 3 and nextcolor == mycolor):
+            while (count != 2 and nextcolor == mycolor):
                 count += 1
                 nextcolor = self.color_str[count + 1]
             info[firstvertex] = (mycolor, count)
@@ -448,7 +436,7 @@ class NPTSPSolver:
             count = 1
             mycolor = self.color_str[secondvertex]
             nextcolor = self.color_str[component[-2]]
-            while (count != 3 and nextcolor == mycolor):
+            while (count != 2 and nextcolor == mycolor):
                 count += 1
                 nextcolor = self.color_str[-2 - count]
             info[secondvertex] = (mycolor, count)
