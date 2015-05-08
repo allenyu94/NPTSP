@@ -145,43 +145,44 @@ class NPTSPSolver:
     """
     def find_components(self, mst):
         
-	adj_list = mst
+        adj_list = mst
         path_components = [] 
 
-	while self.remains(adj_list):
-	    start = None
-	    min_val = 101
-	    for i in range(self.num_vertices):
-	        if len(adj_list[i]) == 1:
-		    vertex = adj_list[i][0]
-		    if self.vertices[i][vertex] < min_val:
-		        min_val = self.vertices[i][vertex]
-		        start = i
-	    #print "We start here: " + str(start)
+        while self.remains(adj_list):
+            start = None
+            min_val = 101
+            for i in range(self.num_vertices):
+                print adj_list[i]
+                if len(adj_list[i]) == 1:
+                    vertex = adj_list[i][0]
+                    if self.vertices[i][vertex] < min_val:
+                        min_val = self.vertices[i][vertex]
+                        start = i
+            #print "We start here: " + str(start)
             one_component = self.components(adj_list, start, [start])
-	    path_components.append(one_component)
-	    for vertex in one_component:
-		for i in range(self.num_vertices):
-		    if vertex in adj_list[i]: 
-		        if len(adj_list[i]) == 1 and not self.multiconnected(adj_list, i):
-			    path_components.append([i])
-		        adj_list[i].remove(vertex)
-		adj_list[vertex] = []
-	
-	#print "These are path components: " + str(path_components)
-	return path_components
+            path_components.append(one_component)
+            for vertex in one_component:
+                for i in range(self.num_vertices):
+                    if vertex in adj_list[i]: 
+                        if len(adj_list[i]) == 1 and not self.multiconnected(adj_list, i):
+                            path_components.append([i])
+                        adj_list[i].remove(vertex)
+                adj_list[vertex] = []
+    
+        #print "These are path components: " + str(path_components)
+        return path_components
 
     """
     Find whether a vertex is only connected to the graph by one edge.
     """
     def multiconnected(self, list, v):
-	count = 0
-	for vlist in list:
-	    if v in vlist:
-	        count += 1
+        count = 0
+        for vlist in list:
+            if v in vlist:
+                count += 1
         if count > 1:
-	    return True
-	return False
+            return True
+        return False
 
 
     """
@@ -192,11 +193,14 @@ class NPTSPSolver:
         #print "Checking remains"
         count = 0
         for edge_list in alist:
-	    if not edge_list:
-	        count += 1
+            if not edge_list:
+                #print edge_list
+                #print "Found empty list"
+                count += 1
         if count == self.num_vertices:
-	    return False 
-	    #print "** Not done yet! **"
+            #jprint "no more edges to consider"
+            return False 
+        #print "** Not done yet! **"
         return True 
 
 
@@ -287,9 +291,17 @@ class NPTSPSolver:
 
         return info_list
 
-
-
-
+    """
+    Input: a list of components where each component is a list of vertices
+    Output: a list of components where each component is now guaranteed to follow the coloring rule
+    
+    1) For each component check if there is a potential for coloring issues (if theres more than 3 vertices).
+    2) If yes, then traverse through the component until you find 4 of the same color in a row.
+    3) Check if there's 6 of the same color in a row: if yes, break it so its 3 | 3
+    4) Check ABC < BCD.
+    5) If there's 5 of the same color in a row, further check if CDE < whichever is smaller from above.
+    6) Splice the component accordingly: splicing the component currently being proecessed and adding the leftover back into the list of comonents.
+    """
     def obey_color(self, components): 
         color_str = self.color_str
         for comp_index in xrange(len(components)):
@@ -376,10 +388,10 @@ class NPTSPSolver:
 
     """
     def combineComponents(self, firstcomp, s_point, othercomp, e_point):
-        if firstcomp[0] == s_point: 
+        if firstcomp[0] == s_point and len(firstcomp) > 1: 
             # start point is in front of first comp
             firstcomp = firstcomp[::-1]
-        if othercomp[0] == e_point:
+        if othercomp[0] == e_point and len(othercomp) > 1:
             # end point is in front of other comp
             othercomp = othercomp[::-1]
         return firstcomp + othercomp
@@ -395,6 +407,34 @@ class NPTSPSolver:
                 components.remove(comp)
                 return components
 
+    """
+    Updates info if needed
+    """
+    def updateCompInfo(self, component, info):
+        firstvertex = component[0]
+        secondvertex = component[-1]
+        if firstvertex == secondvertex:
+            print "error: combining error. Only one comp found"
+            return None
+        else:
+
+            count = 1
+            mycolor = self.color_str[firstvertex]
+            nextcolor = self.color_str[component[1]]
+            while (count != 3 and nextcolor == mycolor):
+                count += 1
+                nextcolor = self.color_str[count + 1]
+            info[firstvertex] = (mycolor, count)
+            
+            count = 1
+            mycolor = self.color_str[secondvertex]
+            nextcolor = self.color_str[component[-2]]
+            while (count != 3 and nextcolor == mycolor):
+                count += 1
+                nextcolor = self.color_str[-2 - count]
+            info[secondvertex] = (mycolor, count)
+            return info
+
 
     """
     Combines the components and related info to create the NPTSP path
@@ -407,14 +447,24 @@ class NPTSPSolver:
             for index in xrange(len(info)):
                 info_entry = info[index]
                 if info_entry:
+                    #print("\ncurr vertex is " + info_entry[0] + ", %d.  This is vertex number %d \n" % (info_entry[1], index))
                     first_index = index
                     startcomp = self.getcomponent(components, index)
                     shortest_edge = 200
                     closest_comp_index = None
                     for info_index in xrange(len(info)):
+                        next_endpoint = info[info_index]
                         if info_index == index:
-                            continue
-                        else: 
+                            pass
+                        elif next_endpoint == None or len(next_endpoint) == 0:
+                            pass
+                        elif self.getcomponent(components, index) == self.getcomponent(components, info_index):
+                            #print "info: " + str(info) + "\n"
+                            #print "components: " + str(components)+ "\n"
+                            #print "first comp: " + str(self.getcomponent(components, index))+ "\n"
+                            #print "second comp: " + str(self.getcomponent(components, info_index))+ "\n"
+                            pass
+                        else:
                             if not info[info_index]:
                                 # empty info section: continue
                                 continue
@@ -435,13 +485,16 @@ class NPTSPSolver:
                                 #
                             #
                         #
-
+                        
+                    #print "comps before: " + str(components)
+                    #print info[components[0][0]]
+                    #if len(components[0]) > 1:
+                        #print info[components[0][1]]
                     if not closest_comp_index:
                         # if there is no valid path
+                        print("no closest component!")
                         return None
-                    # updating info
-                    info[first_index] = []
-                    info[closest_comp_index] = []
+                    #print("%d got matched with %d" % (index, closest_comp_index))
                     # updating components
                     #print "components before edit: " + str(components)
                     othercomp = self.getcomponent(components, closest_comp_index)
@@ -449,12 +502,21 @@ class NPTSPSolver:
                     #print ("old comp: " + str(othercomp))
                     newcomp = self.combineComponents(startcomp, first_index, othercomp, closest_comp_index)
                     #print "new comp: " + str(newcomp)
+                    #print "removing comp with vertex: " + str(first_index)
+                    #print components
                     components = self.removeComponent(components, first_index)
+                    #print "removing comp with vertex: " + str(closest_comp_index)
+                    #print components
                     components = self.removeComponent(components, closest_comp_index)
                     components.append(newcomp)
+                    # updating info
+                    #print "info before: " + str(info) + "\n"
+                    info[first_index] = []
+                    info[closest_comp_index] = []
+                    info = self.updateCompInfo(newcomp, info)
+                    #print "info after: " + str(info) + "\n"
                     #print "components after edit: " + str(components)
                     break
-
         return components[0] 
 
 
@@ -463,8 +525,10 @@ class NPTSPSolver:
     ([path], total weight)
     """
     def getAnswer(self, path):
-        if path:
-            return (path, sum(path))
-        else:
+        if not path:
             return (None, 0)
+        path_weight = 0
+        for i in xrange(len(path) - 1):
+            path_weight += self.vertices[i][i+1]
+        return (path, path_weight)
 

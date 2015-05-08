@@ -3,7 +3,7 @@ import os
 from code import NPTSPSolver
 
 
-TEST_PATH = "inputs/"
+TEST_PATH = "instances/"
 
 
 fout = open ("answer.out", "w")
@@ -23,18 +23,19 @@ for inp in inputs:
     mst_answer = nptsp_solver.findMST()
     #print('found my mst' + str(mst_answer))
     components = nptsp_solver.find_components(mst_answer)
-    print("found my components " + str(components))
+    #print("found my components " + str(components))
     colorized = nptsp_solver.obey_color(components)
-    print("\n colorized my components " + str(colorized) +" \n")
+    #print("\n colorized my components " + str(colorized) +" \n")
     #print(str(colorized))
     info_list = nptsp_solver.update_info(colorized)
-    print("\n the color and number of consecutive color nodes info: " +
-           str(info_list) + "\n")
+    #print("\n the color and number of consecutive color nodes info: " +
+           #str(info_list) + "\n")
     combined_comp = nptsp_solver.combine(colorized, info_list)
     print("\n the combined component: " + str(combined_comp) + "\n")
     answer = nptsp_solver.getAnswer(combined_comp)
     print("\n total weight is: " + str(answer[1]) + "\n")
     #fout.write(str(sum(mst_answer))) OUTPUTS THE SUM OF THE MST EDGE WEIGHTS
+    fout.write(" ".join(str(x) for x in combined_comp))
     fout.write("\n")
 
     # find an answer, and put into assign
