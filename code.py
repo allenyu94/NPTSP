@@ -398,7 +398,7 @@ class NPTSPSolver:
         if firstcomp[0] == s_point and len(firstcomp) > 1: 
             # start point is in front of first comp
             firstcomp = firstcomp[::-1]
-        if othercomp[0] == e_point and len(othercomp) > 1:
+        if othercomp[0] != e_point and len(othercomp) > 1:
             # end point is in front of other comp
             othercomp = othercomp[::-1]
         return firstcomp + othercomp
@@ -428,17 +428,18 @@ class NPTSPSolver:
             count = 1
             mycolor = self.color_str[firstvertex]
             nextcolor = self.color_str[component[1]]
-            while (count != 2 and nextcolor == mycolor):
+            max_count = 3 if len(component) >= 3 else 2
+            while (count != max_count and nextcolor == mycolor):
+                nextcolor = self.color_str[component[count]]
                 count += 1
-                nextcolor = self.color_str[count + 1]
             info[firstvertex] = (mycolor, count)
             
             count = 1
             mycolor = self.color_str[secondvertex]
             nextcolor = self.color_str[component[-2]]
-            while (count != 2 and nextcolor == mycolor):
+            while (count != max_count and nextcolor == mycolor):
+                nextcolor = self.color_str[component[]]
                 count += 1
-                nextcolor = self.color_str[-2 - count]
             info[secondvertex] = (mycolor, count)
             return info
 
@@ -524,6 +525,8 @@ class NPTSPSolver:
                     #print "info after: " + str(info) + "\n"
                     #print "components after edit: " + str(components)
                     break
+        for index in xrange(len(components[0])):
+            components[0][index] += 1
         return components[0] 
 
 
