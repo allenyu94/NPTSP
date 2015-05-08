@@ -337,7 +337,8 @@ class NPTSPSolver:
                                 components.remove(component)
                                 components.append(component[index:])
                                 components.append(component[:index])
-                                break 
+                                return self.obey_color(components)
+                                #break 
 
                         a = component[index - 3]
                         b = component[index - 2]
@@ -364,12 +365,14 @@ class NPTSPSolver:
                                     components.remove(component)
                                     components.append(component[(index - 1):])
                                     components.append(component[:(index - 1)])
-                                    break
+                                    return self.obey_color(components)
+                                    #break
                             print("I want ABC " + str(component))
                             components.remove(component)
                             components.append(component[index:])
                             components.append(component[:index])
-                            break
+                            return self.obey_color(components)
+                            #break
                             
                         else:
                             if e != -1:
@@ -378,12 +381,14 @@ class NPTSPSolver:
                                     components.remove(component)
                                     components.append(component[(index - 1):])
                                     components.append(component[:(index - 1)])
-                                    break
+                                    return self.obey_color(components)
+                                    #break
                             print("I want BCD " + str(component))
                             components.remove(component)
                             components.append(component[(index - 2):])
                             components.append(component[:(index - 2)])
-                            break
+                            return self.obey_color(components)
+                            #break
         # for component in components:
         #     start_color = color_str[component[0]] 
         #     end_color = color_str[component[-1]]
