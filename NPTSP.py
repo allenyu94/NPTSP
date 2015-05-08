@@ -11,7 +11,7 @@ fout.truncate() # clear file
 inputs = [x for x in os.listdir(TEST_PATH) if os.path.splitext(x)[1] == '.in'] #extract inputs that end with .in
 T = len(inputs) # number of test cases
 #for inp in inputs:
-for inp in [5]:
+for inp in xrange(T):
     #fin = open(TEST_PATH + inp, "r")
     fin = open(TEST_PATH + str(inp+1) + ".in", "r")
     N = int(fin.readline()) # number of vertices
