@@ -73,6 +73,7 @@ class NPTSPSolver:
             else: 
                 self.MSThelper(edge, mst_edges, visited)
                 
+
         adj_vertices = [0]*self.num_vertices
         for e in mst_edges:
             v1 = e[0]
@@ -120,13 +121,12 @@ class NPTSPSolver:
         for component in self.visited:
             if edge[0] in component: # when you have a new terminal edge to a path or something
                 component.append(edge[1])
-                
                 if edge not in mst_edges:
                     mst_edges.append(edge)
                 return 
+                
             elif edge[1] in component:
                 component.append(edge[0])
-                
                 if edge not in mst_edges:
                     mst_edges.append(edge)
                 return 
