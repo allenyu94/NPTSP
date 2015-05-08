@@ -10,15 +10,17 @@ fout = open ("answer.out", "w")
 fout.truncate() # clear file
 inputs = [x for x in os.listdir(TEST_PATH) if os.path.splitext(x)[1] == '.in'] #extract inputs that end with .in
 T = len(inputs) # number of test cases
-for inp in inputs:
-    fin = open(TEST_PATH + inp, "r")
+#for inp in inputs:
+for inp in xrange(T):
+    #fin = open(TEST_PATH + inp, "r")
+    fin = open(TEST_PATH + str(inp+1) + ".in", "r")
     N = int(fin.readline()) # number of vertices
     v = [[] for i in range(N)] # 2d matrix holding vertices' edge weights
     for i in xrange(N):
         v[i] = [int(x) for x in fin.readline().split()]
     c = fin.readline() # holds color string
     
-    print('\n testing ' + str(inp))
+    print('\n testing ' + str(inp+1))
     nptsp_solver = NPTSPSolver(N, v, c)
     
     mst_answer = nptsp_solver.findMST()
@@ -40,7 +42,6 @@ for inp in inputs:
     
     answer = nptsp_solver.getAnswer(combined_comp)
     print("\n total weight is: " + str(answer[1]) + "\n")
-    
     #fout.write(str(sum(mst_answer))) OUTPUTS THE SUM OF THE MST EDGE WEIGHTS
     fout.write(" ".join(str(x) for x in combined_comp))
     fout.write("\n")
