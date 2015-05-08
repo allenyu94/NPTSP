@@ -310,11 +310,14 @@ class NPTSPSolver:
     6) Splice the component accordingly: splicing the component currently being proecessed and adding the leftover back into the list of comonents.
     """
     def obey_color(self, components): 
+        print("this is the components:" + str(components))
         color_str = self.color_str
-        for comp_index in xrange(len(components)):
-            component = components[comp_index]
+        #for comp_index in xrange(len(components)):
+        for component in components:
+            #component = components[comp_index]
             #print(component)
             if len(component) > 3:
+                print (str(component))
                 curr_color = "W"
                 color_count = 0
                 for index in range(len(component)):
@@ -327,11 +330,13 @@ class NPTSPSolver:
                     else:
                         color_count = 0
                     if color_count >= 3:
+                        print("I need to cut this component :" + str(component))
                         #if there's 6 in a row of the same color, evenly divide it
                         if len(component) > (index + 2):
-                            if (color_str[component[index + 1]] == curr_color and color_str[component[index + 2]] == curr_color):
+                            if (color_str[component[index + 1]] == curr_color) and (color_str[component[index + 2]] == curr_color):
+                                components.remove(component)
                                 components.append(component[index:])
-                                components[comp_index] = component[:index]
+                                components.append(component[:index])
                                 break 
 
                         a = component[index - 3]
@@ -355,21 +360,29 @@ class NPTSPSolver:
                         if ABC < BCD:
                             if e != -1:
                                 if CDE < ABC:
+                                    print ("I want CDE for comonent " + str(component))
+                                    components.remove(component)
                                     components.append(component[(index - 1):])
-                                    components[comp_index] = component[:(index - 1)]
+                                    components.append(component[:(index - 1)])
                                     break
+                            print("I want ABC " + str(component))
+                            components.remove(component)
                             components.append(component[index:])
-                            components[comp_index] = component[:index]
+                            components.append(component[:index])
                             break
                             
                         else:
                             if e != -1:
                                 if CDE < BCD:
+                                    print ("I want CDE " + str(component))
+                                    components.remove(component)
                                     components.append(component[(index - 1):])
-                                    components[comp_index] = component[:(index - 1)]
+                                    components.append(component[:(index - 1)])
                                     break
+                            print("I want BCD " + str(component))
+                            components.remove(component)
                             components.append(component[(index - 2):])
-                            components[comp_index] = component[:(index - 2)]
+                            components.append(component[:(index - 2)])
                             break
         # for component in components:
         #     start_color = color_str[component[0]] 
@@ -379,6 +392,14 @@ class NPTSPSolver:
         #         while start_color == color_str[component[end_index]] and (end_index != -1 * len(component)):
         #             end_index -= 1
         #             end_color = color_str[component[end_index]]
+        color_list = []
+        for component in components:
+            comp_color = []
+            for index in xrange(len(component)):
+                comp_color += color_str[component[index]]
+            color_list.append(comp_color)
+        print(str(color_list))
+        print(str(components))
         return components
 
     """
