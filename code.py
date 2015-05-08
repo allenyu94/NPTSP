@@ -192,13 +192,10 @@ class NPTSPSolver:
         #print "Checking remains"
         count = 0
         for edge_list in alist:
-	        if not edge_list:
-	            #print edge_list
-		        #print "Found empty list"
-	            count += 1
+	    if not edge_list:
+	        count += 1
         if count == self.num_vertices:
-	        #jprint "no more edges to consider"
-	        return False 
+	    return False 
 	    #print "** Not done yet! **"
         return True 
 
@@ -223,10 +220,6 @@ class NPTSPSolver:
             if self.vertices[index][v] < minm:
                 minm = self.vertices[index][v]
             next_index = v
-        #print "The next vertex is: " + str(v)
-        #print "This next list is: " + str(list[next_index])
-        #print "The current index is: " + str(index)
-        #print "The current list is: " + str(list[index])
         list[index].remove(next_index)
         list[next_index].remove(index)
         current_list += [next_index]
@@ -257,7 +250,7 @@ class NPTSPSolver:
             if len(path) == 1:
                 info_list[start] = (start_color, continuous)
 
-                #If the path is just a pair of nodes, check if the colors match
+            #If the path is a pair of nodes, check if the colors match
             #and assign continuous accordingly.
             elif len(path) == 2:
                 if start_color == end_color:
