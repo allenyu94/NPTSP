@@ -408,10 +408,10 @@ class NPTSPSolver:
 
     """
     def combineComponents(self, firstcomp, s_point, othercomp, e_point):
-        if firstcomp[0] == s_point: 
+        if firstcomp[0] == s_point and len(firstcomp) > 1: 
             # start point is in front of first comp
             firstcomp = firstcomp[::-1]
-        if othercomp[0] == e_point:
+        if othercomp[0] == e_point and len(othercomp) > 1:
             # end point is in front of other comp
             othercomp = othercomp[::-1]
         return firstcomp + othercomp
@@ -426,6 +426,34 @@ class NPTSPSolver:
             if vertex in comp:
                 components.remove(comp)
                 return components
+
+    """
+    Updates info if needed
+    """
+    def updateCompInfo(self, component, info):
+        firstvertex = component[0]
+        secondvertex = component[-1]
+        if firstvertex == secondvertex:
+            print "error: combining error. Only one comp found"
+            return None
+        else:
+
+            count = 1
+            mycolor = self.color_str[firstvertex]
+            nextcolor = self.color_str[component[1]]
+            while (count != 3 and nextcolor == mycolor):
+                count += 1
+                nextcolor = self.color_str[count + 1]
+            info[firstvertex] = (mycolor, count)
+            
+            count = 1
+            mycolor = self.color_str[secondvertex]
+            nextcolor = self.color_str[component[-2]]
+            while (count != 3 and nextcolor == mycolor):
+                count += 1
+                nextcolor = self.color_str[-2 - count]
+            info[secondvertex] = (mycolor, count)
+            return info
 
 
     """
@@ -450,55 +478,43 @@ class NPTSPSolver:
                             pass
                         elif next_endpoint == None or len(next_endpoint) == 0:
                             pass
-                        # else: 
-                            # if info[info_index]:
+                        elif self.getcomponent(components, index) == self.getcomponent(components, info_index):
+                            #print "info: " + str(info) + "\n"
+                            #print "components: " + str(components)+ "\n"
+                            #print "first comp: " + str(self.getcomponent(components, index))+ "\n"
+                            #print "second comp: " + str(self.getcomponent(components, info_index))+ "\n"
+                            pass
                         else:
-                            #print("this time info[info_index] is " + str(info[info_index]))
+                            if not info[info_index]:
+                                # empty info section: continue
+                                continue
                             currcolor = info_entry[0]
                             curr_num = info_entry[1]
-                            varcolor = next_endpoint[0]
-                            varnum = next_endpoint[1]
+                            varcolor = info[info_index][0]
+                            varnum = info[info_index][1]
                             #print "curr color: " + str(currcolor)
                             #print "curr num: " + str(curr_num)
                             #print "var color: " + str(varcolor)
                             #print "var num: " + str(varnum)
-                            print ("next color is " + varcolor + ", %d.  This is vertex number %d"  %  (varnum, info_index))
                             if currcolor != varcolor or (currcolor == varcolor and curr_num + varnum <= 3):
                                 # if valid coloring
                                 if self.vertices[index][info_index] < shortest_edge: 
                                     # if the new comp is closest so far
                                     shortest_edge = self.vertices[index][info_index]
                                     closest_comp_index = info_index
-                                        #
                                 #
-                            # if not info[info_index]:
-                            #     # empty info section: continue
-                            #     continue
-                            # currcolor = info_entry[0]
-                            # curr_num = info_entry[1]
-                            # varcolor = info[info_index][0]
-                            # varnum = info[info_index][1]
-                            # #print "curr color: " + str(currcolor)
-                            # #print "curr num: " + str(curr_num)
-                            # #print "var color: " + str(varcolor)
-                            # #print "var num: " + str(varnum)
-                            # if currcolor != varcolor or (currcolor == varcolor and curr_num + varnum <= 3):
-                            #     # if valid coloring
-                            #     if self.vertices[index][info_index] < shortest_edge: 
-                            #         # if the new comp is closest so far
-                            #         shortest_edge = self.vertices[index][info_index]
-                            #         closest_comp_index = info_index
-                            #     #
-                            # #
+                            #
                         #
-                    print("%d got matched with %d" % (index, closest_comp_index))
+                        
+                    #print "comps before: " + str(components)
+                    #print info[components[0][0]]
+                    #if len(components[0]) > 1:
+                        #print info[components[0][1]]
                     if not closest_comp_index:
                         # if there is no valid path
                         print("no closest component!")
                         return None
-                    # updating info
-                    info[first_index] = []
-                    info[closest_comp_index] = []
+                    #print("%d got matched with %d" % (index, closest_comp_index))
                     # updating components
                     #print "components before edit: " + str(components)
                     othercomp = self.getcomponent(components, closest_comp_index)
@@ -506,9 +522,19 @@ class NPTSPSolver:
                     #print ("old comp: " + str(othercomp))
                     newcomp = self.combineComponents(startcomp, first_index, othercomp, closest_comp_index)
                     #print "new comp: " + str(newcomp)
+                    #print "removing comp with vertex: " + str(first_index)
+                    #print components
                     components = self.removeComponent(components, first_index)
+                    #print "removing comp with vertex: " + str(closest_comp_index)
+                    #print components
                     components = self.removeComponent(components, closest_comp_index)
                     components.append(newcomp)
+                    # updating info
+                    #print "info before: " + str(info) + "\n"
+                    info[first_index] = []
+                    info[closest_comp_index] = []
+                    info = self.updateCompInfo(newcomp, info)
+                    #print "info after: " + str(info) + "\n"
                     #print "components after edit: " + str(components)
                     break
         return components[0] 
